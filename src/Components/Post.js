@@ -83,7 +83,7 @@ function Post(props) {
   };
 
   const onDeletePostClick = (id) => {
-    axios.delete(`http://localhost:8080/deleteComment/${id}`)
+    axios.delete(`http://localhost:8080/deletePost/${id}`)
     .then(response => {
       console.log(response);
     })
@@ -94,7 +94,7 @@ function Post(props) {
 
   const onUpdatePostClick = () => {
     axios
-      .put("http://localhost:8080/editComment", {
+      .put("http://localhost:8080/editPost", {
         id: commentId,
         user_name: user_name,
         message: newComment,
