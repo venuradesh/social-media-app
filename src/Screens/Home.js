@@ -1,17 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 //components
 import Post from "../Components/Post";
 import Header from "../Components/Header";
 import InputField from "../Components/InputField";
+import axios from "axios";
 
 function Home() {
   const [hotelname, setHotelname] = useState("");
   const [desc, setDesc] = useState("");
+  const [image, setImage] = useState("");
   const [file, setFile] = useState(null);
+  const [userID, setUserID] = useState("samitha123");
+  const [allPost, setAllPost] = useState([]);
 
-  const onSubmitClick = () => {};
+  const onSubmitClick = () => {
+  
+    const data = {
+      userID: userID,
+      resturantName: hotelname,
+      description: desc,
+      time: Date.now(),
+      image:image
+    };
+
+    axios
+        .post("http://localhost:8080/addPost", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    setAllPost([]);
+  };
+
+
+  const convertBase64 = (e) =>{
+    var reader = new FileReader();
+    reader.readAsDataURL(e.target.files[0]);
+    reader.onload = () => {
+      setImage(reader.result)
+    }
+    reader.onerror = error =>{
+      console.log("Error : ",error);
+    }
+  }
+  useEffect(() => {
+    axios
+    .get(`http://localhost:8080/getPosts`)
+    .then((res) => {
+      setAllPost([...res.data]);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }, [allPost]);
 
   return (
     <Container>
@@ -20,8 +68,11 @@ function Home() {
       </div>
       <div className="contents">
         <div className="posts-container">
-          <Post />
-          <Post />
+        {allPost.map((post, index) => (
+            <Post post={post} useId={userID}/>
+          )
+          )
+        }
         </div>
         <div className="add-post-container">
           <div className="heading">Add a Post</div>
@@ -29,7 +80,7 @@ function Home() {
             <InputField content="Restaurant Name" id="hotelname" type="text" onChange={setHotelname} />
             <InputField content="Description" id="desc" type="text" onChange={setDesc} />
             <div className="btn-container">
-              <input type="file" name="fileinput" id="fileinput" onChange={(e) => setFile(e.target.files[0])} />
+              <input type="file" name="fileinput" id="fileinput" onChange={convertBase64} />
               <div className="btn photo" onClick={() => document.getElementById("fileinput").click()}>
                 Add a photo
               </div>
