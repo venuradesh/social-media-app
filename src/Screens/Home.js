@@ -21,6 +21,7 @@ function Home() {
       <div className="contents">
         <div className="posts-container">
           <Post />
+          <Post />
         </div>
         <div className="add-post-container">
           <div className="heading">Add a Post</div>
@@ -57,7 +58,6 @@ const Container = styled.div`
     width: 100%;
     height: 100%;
     background-color: var(--post-background);
-    position: sticky;
     top: 0;
     box-shadow: 0 2px 5px 0px lightgray;
   }
@@ -67,13 +67,19 @@ const Container = styled.div`
     column-gap: 30px;
     padding-top: 30px;
     padding-inline: 50px;
+    overflow-x: hidden;
 
     .posts-container {
       flex: 2;
-      max-height: calc(100vh - 60px);
+      /* max-height: calc(100vh - 60px); */
       position: relative;
       display: flex;
       justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      row-gap: 20px;
+      overflow-y: auto;
+      margin-bottom: 30px;
     }
 
     .add-post-container {
