@@ -33,6 +33,8 @@ function Post(props) {
   const [rateId, setRateId] = useState("");
   const [allRatings, setAllRatings] = useState([]);
   const [overallRate, setOverallRate] = useState(0);
+  const [likesCount, setLikesCount] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
   
   
   const post = props.post;
@@ -53,7 +55,7 @@ function Post(props) {
           },
         })
         .then((res) => {
-          console.log(res);
+          setComments([]);
         })
         .catch((err) => {
           console.log(err);
@@ -63,7 +65,7 @@ function Post(props) {
   const onDeleteCommentClick = (id) => {
     axios.delete(`http://localhost:8080/deleteComment/${id}`)
     .then(response => {
-      console.log(response);
+      setComments([]);
     })
     .catch(error => {
       console.error(error);
@@ -81,7 +83,6 @@ function Post(props) {
       })
       .then((res) => {
         setComments([]);
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -133,6 +134,7 @@ function Post(props) {
         })
         .then((res) => {
           console.log(res);
+          setAllRatings([]);
         })
         .catch((err) => {
           console.log(err);
@@ -143,6 +145,7 @@ function Post(props) {
     axios.delete(`http://localhost:8080/deleteRating/${id}`)
     .then(response => {
       console.log(response);
+      setAllRatings([]);
     })
     .catch(error => {
       console.error(error);
@@ -161,6 +164,7 @@ function Post(props) {
       })
       .then((res) => {
         console.log(res);
+        setAllRatings([]);
       })
       .catch((err) => {
         console.log(err);
@@ -190,6 +194,18 @@ function Post(props) {
       });
   }, [allRatings]);
 
+  useEffect(() => {
+    // localStorage.setItem("comments", JSON.stringify(allComments));
+    axios
+      .get(`http://localhost:8080/getLikes/${postID}`)
+      .then((res) => {
+        setLikesCount(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [likesCount]);
+
   const onRateClick = () =>{
     const r=0;
     allRatings.map((_rate) => {
@@ -197,6 +213,47 @@ function Post(props) {
     });
     setOverallRate(r/allRatings.length);
   };
+
+  const onClickLike = (id) =>{
+    if(isLiked){
+      removeLike();
+    }
+    else{
+      addLike();
+    }
+  }
+
+  const addLike = () =>{
+    data={
+      userID: user_name,
+      postID:postID
+    }
+      
+    axios
+      .post(`http://localhost:8080/addLike`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        setLikesCount(0);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    
+  }
+
+  const removeLike = (id) =>{
+    axios.delete(`http://localhost:8080/removeLike/${id}`)
+    .then(response => {
+      setLikesCount(0);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+    
+  }
   
   return (
     <Container>
@@ -234,7 +291,7 @@ function Post(props) {
       <div className="like-count">
         <div className="like">
           <img src={Like} alt="like" />
-          12
+          {likesCount}
         </div>
         <div className="comment">
           <img src={Comment} alt="comment" />{comments.length}
