@@ -26,13 +26,19 @@ function Post(props) {
   const [newComment, setNewComment] = useState("");
   const [rateClicked, setRateClicked] = useState(false);
   const [showReviewsClicked, setShowReviewsClicked] = useState(false);
-  const [comments, setComments] = useState([])
-  const [commentId, setCommentId] = useState("")
+  const [comments, setComments] = useState([]);
+  const [commentId, setCommentId] = useState("");
+  const [ratingMessage, setRatingMessage] = useState("");
+  const [rate, setRate] = useState(0);
+  const [rateId, setRateId] = useState("");
+  const [allRatings, setAllRatings] = useState([]);
+  const [overallRate, setOverallRate] = useState(0);
   
   
   const post = props.post;
   const postID = post.id;
   const user_name = props.useId;
+  const resturantName=post.resturantName;
   const addComment = () =>{
     const data = {
       user_name: user_name,
@@ -110,6 +116,56 @@ function Post(props) {
       });
   };
 
+  const addRating = () =>{
+    const data = {
+      userID: user_name,
+      resturantName:resturantName,
+      message: ratingMessage,
+      time: Date.now(),
+      rate: rate
+  
+    };
+    axios
+        .post("http://localhost:8080/addRating", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  };
+
+  const onDeleteRateClick = (id) => {
+    axios.delete(`http://localhost:8080/deleteRating/${id}`)
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  };
+
+  const onUpdateRateClick = () => {
+    axios
+      .put("http://localhost:8080/updateRating", {
+        id: rateId,
+        userID: user_name,
+        resturantName:resturantName,
+        message: ratingMessage,
+        time: Date.now(),
+        rate: rate
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   useEffect(() => {
     // localStorage.setItem("comments", JSON.stringify(allComments));
     axios
@@ -121,6 +177,26 @@ function Post(props) {
         console.log(err);
       });
   }, [comments]);
+
+  useEffect(() => {
+    // localStorage.setItem("comments", JSON.stringify(allComments));
+    axios
+      .get(`http://localhost:8080/getRatings/${resturantName}`)
+      .then((res) => {
+        setAllRatings([...res.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [allRatings]);
+
+  const onRateClick = () =>{
+    const r=0;
+    allRatings.map((_rate) => {
+      r = r + _rate.rate;
+    });
+    setOverallRate(r/allRatings.length);
+  };
   
   return (
     <Container>
