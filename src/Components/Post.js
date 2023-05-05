@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Rating from "@mui/material/Rating";
+import axios from "axios";
+import moment from "moment/moment";
 
 //images
 import ProfilePic from "../assets/profile.png";
@@ -13,19 +15,113 @@ import Close from "../assets/close.png";
 import Edit from "../assets/edit.png";
 
 //comment data
-import comments from "../Data/CommentsData";
 import reviews from "../Data/reviews";
 
 const userid = "ahfbx";
 
-function Post() {
+function Post(props) {
   const [optionsClicked, setOptionsClicked] = useState(false);
   const [allComments, setAllComments] = useState(2);
   const [newCommentClicked, setNewCommentClicked] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [rateClicked, setRateClicked] = useState(false);
   const [showReviewsClicked, setShowReviewsClicked] = useState(false);
+  const [comments, setComments] = useState([])
+  const [commentId, setCommentId] = useState("")
+  
+  
+  const post = props.post;
+  const postID = post.id;
+  const user_name = props.useId;
+  const addComment = () =>{
+    const data = {
+      user_name: user_name,
+      message: newComment,
+      time: Date.now(),
+      postID:postID
+    };
+    axios
+        .post("http://localhost:8080/addComment", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  };
 
+  const onDeleteCommentClick = (id) => {
+    axios.delete(`http://localhost:8080/deleteComment/${id}`)
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  };
+
+  const onUpdateCommentClick = () => {
+    axios
+      .put("http://localhost:8080/editComment", {
+        id: commentId,
+        user_name: user_name,
+        message: newComment,
+        time: Date.now(),
+        postID:postID
+      })
+      .then((res) => {
+        setComments([]);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const onDeletePostClick = (id) => {
+    axios.delete(`http://localhost:8080/deleteComment/${id}`)
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  };
+
+  const onUpdatePostClick = () => {
+    axios
+      .put("http://localhost:8080/editComment", {
+        id: commentId,
+        user_name: user_name,
+        message: newComment,
+        time: Date.now(),
+        postID:postID
+      })
+      .then((res) => {
+        setComments([]);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    // localStorage.setItem("comments", JSON.stringify(allComments));
+    axios
+      .get(`http://localhost:8080/getComments/${postID}`)
+      .then((res) => {
+        setComments([...res.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [comments]);
+  
   return (
     <Container>
       <div className="profile-container">
@@ -33,7 +129,7 @@ function Post() {
           <div className="profile-image"></div>
           <div className="profile-name">
             <div className="name">Venura Warnasooriya</div>
-            <div className="time">12 min ago</div>
+            <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
           </div>
         </div>
         <div className="more-options" onClick={() => (optionsClicked ? setOptionsClicked(false) : setOptionsClicked(true))}>
@@ -49,22 +145,23 @@ function Post() {
       <Description>
         <div className="res-name">
           <div className="res">
-            <span>Resturant Name:</span> Hotel 5 star
+            <span>Resturant Name:</span> {post.resturantName}
           </div>
           <div className="btn" onClick={() => setRateClicked(true)}>
             <img src={Star} alt="star" /> Rate
           </div>
         </div>
-        <div className="desc-food">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec est neque, hendrerit at sodales at, lobortis eget nibh. Vivamus ipsum libero, auctor et lacinia eget, finibus dapibus leo. Maecenas dapibus leo ut est fermentum cursus. </div>
+        <div className="desc-food">{post.description}</div>
       </Description>
-      <PostContainer></PostContainer>
+      <PostContainer source={post.iamge}>
+      </PostContainer>
       <div className="like-count">
         <div className="like">
           <img src={Like} alt="like" />
           12
         </div>
         <div className="comment">
-          <img src={Comment} alt="comment" />2
+          <img src={Comment} alt="comment" />{comments.length}
         </div>
       </div>
       <div className="like-comment-section">
@@ -84,7 +181,7 @@ function Post() {
             </div>
             <input type="text" placeholder="Enter your comment" id="comment" onChange={(e) => setNewComment(e.target.value)} />
             <div className="btn">
-              <img src={Send} alt="send" />
+              <img src={Send} alt="send" onClick={addComment} />
             </div>
           </NewComment>
         ) : (
@@ -100,10 +197,10 @@ function Post() {
                   </div>
                   <div className="container">
                     <div className="name">
-                      {comment.name}
-                      <div className="time">{comment.time}</div>
+                      {comment.user_name}
+                      <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
                     </div>
-                    <div className="comment">{comment.comment}</div>
+                    <div className="comment">{comment.message}</div>
                   </div>
                 </div>
               </div>
@@ -373,7 +470,7 @@ const Description = styled.div`
 const PostContainer = styled.div`
   width: 100%;
   height: 300px;
-  background-image: url(${PostCover});
+  background-image: url(${props => props.source});
   background-size: cover;
   background-position: center;
   margin-top: 20px;
