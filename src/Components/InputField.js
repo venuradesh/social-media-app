@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-function InputField({ type, id, content, onChange }) {
+function InputField({ type, id, content, onChange, hover }) {
   return (
     <Container>
       <input type={type} name={id} id={id} required autoComplete="off" onChange={(e) => onChange(e.target.value)} />
       <label htmlFor={id}>
-        <span>{content}</span>
+        <span className={`${hover ? "active" : ""}`}>{content}</span>
       </label>
     </Container>
   );
@@ -71,6 +71,12 @@ const Container = styled.div`
       font-size: 1rem;
       color: gray;
       transition: all 0.3s ease;
+
+      &.active {
+        bottom: 25px;
+        font-size: 0.6rem;
+        font-weight: 600;
+      }
     }
   }
 `;

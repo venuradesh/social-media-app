@@ -10,7 +10,7 @@ import axios from "axios";
 //data
 import post from "../Data/Posts";
 
-function Home() {
+function Home({ user }) {
   const [hotelname, setHotelname] = useState("");
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState("");
@@ -69,14 +69,14 @@ function Home() {
   return (
     <Container>
       <div className="header">
-        <Header />
+        <Header user={user} />
       </div>
       <div className="contents">
         <div className="posts-container">
-          {/* <Post post={allPost} useId={userID} /> */}
-          {allPost.map((post, index) => (
+          <Post post={post} useId={userID} />
+          {/* {allPost.map((post, index) => (
             <Post post={post} useId={userID} />
-          ))}
+          ))} */}
         </div>
         <div className="add-post-container">
           <div className="heading">Add a Post</div>
