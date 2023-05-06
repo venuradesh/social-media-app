@@ -46,6 +46,10 @@ function Post(props) {
   const [newRatingValue, setNewRatingValue] = useState(0);
   const [newReview, setNewReview] = useState("");
   const [userAddedTheReview, setUserAddedTheReview] = useState(false);
+  const [editReviewClicked, setEditReviewClicked] = useState(false);
+  const [edittedReview, setEdittedReview] = useState("");
+  const [defaultReview, setDefaultReview] = useState("");
+  const [editRatingValue, setEditRatingValue] = useState(0);
 
   const post = props.post;
   const postID = post.id;
@@ -169,6 +173,8 @@ function Post(props) {
   };
 
   const onUpdateRateClick = () => {
+    setEditReviewClicked(false);
+
     axios
       .put("http://localhost:8080/updateRating", {
         id: rateId,
@@ -491,25 +497,62 @@ function Post(props) {
               )}
             </div>
             {showReviewsClicked ? (
-              <div className="reviews-container">
-                {reviews.map((review, index) => (
-                  <div className="review">
-                    <div className="profile">{review.username}</div>
-                    <div className="comment">{review.review}</div>
-                    <div className="rating">
-                      <Rating name="read-only" value={review.rating} readOnly size="large" />
-                    </div>
-                    <div className="edit-section">
-                      <div className="edit btn">
-                        <img src={Edit} alt="edit" />
+              <>
+                {!editReviewClicked ? (
+                  <div className="reviews-container">
+                    {reviews.map((review, index) => (
+                      <div className="review">
+                        <div className="profile">{review.username}</div>
+                        <div className="comment">{review.review}</div>
+                        <div className="rating">
+                          <Rating name="read-only" value={review.rating} readOnly size="large" />
+                        </div>
+                        <div className="edit-section">
+                          <div
+                            className="edit btn"
+                            onClick={() => {
+                              setEditReviewClicked(true);
+                              setDefaultReview(review.review);
+                              setEditRatingValue(review.rating);
+                            }}
+                          >
+                            <img src={Edit} alt="edit" />
+                          </div>
+                          <div className="delete btn">
+                            <img src={Delete} alt="delete" />
+                          </div>
+                        </div>
                       </div>
-                      <div className="delete btn">
-                        <img src={Delete} alt="delete" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="edit-review">
+                    <input type="text" name="edit-review" onChange={(e) => setEdittedReview(e.target.value)} defaultValue={defaultReview} id="new-reivew" className="add-review" placeholder="Enter the New Review" />
+                    <Rating
+                      name="simple-controlled"
+                      onChange={(event, newValue) => {
+                        setEditRatingValue(newValue);
+                      }}
+                      value={editRatingValue}
+                    />
+                    <div className="btn-container">
+                      <div
+                        className="send btn"
+                        onClick={() => {
+                          if (edittedReview) {
+                            onUpdateRateClick();
+                          }
+                        }}
+                      >
+                        Submit
+                      </div>
+                      <div className="cancel btn" onClick={() => setEditReviewClicked(false)}>
+                        Cancel
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             ) : (
               <></>
             )}
@@ -934,6 +977,37 @@ const Ratings = styled.div`
     padding-top: 40px;
     border-radius: 20px;
     padding-bottom: 40px;
+
+    .edit-review {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      input {
+        width: 100%;
+        height: 50px;
+        padding-inline: 20px;
+        border: none;
+        outline: none;
+        background-color: var(--background-color);
+        margin-bottom: 10px;
+      }
+
+      .btn-container {
+        display: flex;
+        column-gap: 20px;
+
+        .cancel {
+          background-color: var(--btn-danger);
+
+          &:hover {
+            background-color: var(--btn-danger-alt);
+          }
+        }
+      }
+    }
 
     .close {
       position: absolute;
