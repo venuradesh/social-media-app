@@ -19,6 +19,10 @@ function Home() {
   const [allPost, setAllPost] = useState([]);
 
   const onSubmitClick = () => {
+    document.getElementById("hotelname").value = "";
+    document.getElementById("desc").value = "";
+    document.getElementById("fileinput").value = "";
+
     const data = {
       userID: userID,
       resturantName: hotelname,
