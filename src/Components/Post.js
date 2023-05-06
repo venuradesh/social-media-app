@@ -499,8 +499,13 @@ function Post(props) {
                     <div className="rating">
                       <Rating name="read-only" value={review.rating} readOnly size="large" />
                     </div>
-                    <div className="edit">
-                      <img src={Edit} alt="edit" />
+                    <div className="edit-section">
+                      <div className="edit btn">
+                        <img src={Edit} alt="edit" />
+                      </div>
+                      <div className="delete btn">
+                        <img src={Delete} alt="delete" />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -1031,6 +1036,7 @@ const Ratings = styled.div`
       margin-top: 20px;
       height: 300px;
       overflow-y: auto;
+      overflow-x: hidden;
 
       .review {
         position: relative;
@@ -1046,25 +1052,33 @@ const Ratings = styled.div`
           font-size: 0.8rem;
         }
 
-        .edit {
+        .edit-section {
           position: absolute;
           height: 100%;
           top: 0;
           display: flex;
-          align-items: center;
-          background-color: var(--background-color);
-          padding-inline: 20px;
-          cursor: pointer;
           right: -100%;
-          transition: all 0.3s ease;
 
+          .btn {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            background-color: var(--background-color);
+            padding-inline: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+              background-color: lightgray;
+            }
+          }
           img {
             width: 20px;
           }
         }
 
         &:hover {
-          .edit {
+          .edit-section {
             right: 0;
           }
         }
