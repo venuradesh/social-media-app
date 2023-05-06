@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 
 //Screens
 import Home from "./Screens/Home";
+import Profile from "./Screens/Profile";
 
 //components
 import Signup from "./Components/Signup";
@@ -23,6 +24,7 @@ function App() {
       <Router>
         <Routes>
           {user.userid ? <Route exact path="/" element={<Home user={user} />} /> : <Route exact path="/" element={<Navigate to="/login" />} />}
+          {user.userid ? <Route exact path="/profile" element={<Profile user={user} />} /> : <Route exact path="/" element={<Navigate to="/login" />} />}
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/login" element={<Login setUser={setUser} />} />
         </Routes>

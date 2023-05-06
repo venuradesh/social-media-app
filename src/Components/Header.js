@@ -18,7 +18,7 @@ function Header({ user }) {
   return (
     <Container>
       <div className="nav-links">
-        <Link to={"/home"} className="home">
+        <Link to={"/"} className="home">
           Home
         </Link>
         <div className="button-container" onClick={() => (profileClicked ? setProfileClicked(false) : setProfileClicked(true))}>
@@ -26,7 +26,9 @@ function Header({ user }) {
           {user.firstName} {user.lastName}
         </div>
         <div className={`logout-container ${profileClicked ? "active" : ""}`}>
-          <div className="profile item">Profile</div>
+          <div className="profile item" onClick={() => navigate("/profile")}>
+            Profile
+          </div>
           <div className="logout item" onClick={() => onLogoutClick()}>
             <img src={Logout} alt="logout" />
             Logout
