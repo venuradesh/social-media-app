@@ -10,7 +10,7 @@ import axios from "axios";
 //data
 import post from "../Data/Posts";
 
-function Home() {
+function Home({ user }) {
   const [hotelname, setHotelname] = useState("");
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState("");
@@ -69,7 +69,7 @@ function Home() {
   return (
     <Container>
       <div className="header">
-        <Header />
+        <Header user={user} />
       </div>
       <div className="contents">
         <div className="posts-container">

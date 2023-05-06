@@ -22,7 +22,7 @@ function App() {
     <Container>
       <Router>
         <Routes>
-          {user.userid ? <Route exact path="/" element={<Home />} /> : <Route exact path="/" element={<Navigate to="/login" />} />}
+          {user.userid ? <Route exact path="/" element={<Home user={user} />} /> : <Route exact path="/" element={<Navigate to="/login" />} />}
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/login" element={<Login setUser={setUser} />} />
         </Routes>

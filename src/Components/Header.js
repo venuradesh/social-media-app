@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 //images
 import Profile from "../assets/profile.png";
 import Logout from "../assets/logout.png";
 
-function Header() {
+function Header({ user }) {
+  const navigate = useNavigate();
   const [profileClicked, setProfileClicked] = useState(false);
+
+  const onLogoutClick = () => {
+    window.localStorage.removeItem("useremail");
+    navigate("/login");
+  };
 
   return (
     <Container>
@@ -17,11 +23,11 @@ function Header() {
         </Link>
         <div className="button-container" onClick={() => (profileClicked ? setProfileClicked(false) : setProfileClicked(true))}>
           <img src={Profile} alt="profile" />
-          Venura Warnasooriya
+          {user.firstName} {user.lastName}
         </div>
         <div className={`logout-container ${profileClicked ? "active" : ""}`}>
           <div className="profile item">Profile</div>
-          <div className="logout item">
+          <div className="logout item" onClick={() => onLogoutClick()}>
             <img src={Logout} alt="logout" />
             Logout
           </div>

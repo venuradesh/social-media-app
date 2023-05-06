@@ -27,13 +27,13 @@ function Signup() {
       <div className="container">
         <div className="heading">Sign Up</div>
         <Form>
-          <InputField type="text" content="First Name" id="firstname" onChange={() => setFirstname()} />
-          <InputField type="text" content="Last Name" id="lastname" onChange={() => setLastname()} />
-          <InputField type="date" hover={true} content="Date of Birth" id="dob" onChange={() => setDob()} />
-          <InputField type="text" content="Address" id="address" onChange={() => setAddress()} />
-          <InputField type="email" content="Email" id="email" onChange={() => setEmail()} />
-          <InputField type="password" content="Password" id="password" onChange={() => setPassword()} />
-          <InputField type="password" content="Confirm Password" id="cpassword" onChange={() => setConfirmPassword()} />
+          <InputField type="text" content="First Name" id="firstname" onChange={setFirstname} />
+          <InputField type="text" content="Last Name" id="lastname" onChange={setLastname} />
+          <InputField type="date" hover={true} content="Date of Birth" id="dob" onChange={setDob} />
+          <InputField type="text" content="Address" id="address" onChange={setAddress} />
+          <InputField type="email" content="Email" id="email" onChange={setEmail} />
+          <InputField type="password" content="Password" id="password" onChange={setPassword} />
+          <InputField type="password" content="Confirm Password" id="cpassword" onChange={setConfirmPassword} />
           <div className="btn-container">
             <button type="submit" className="btn submit" onClick={(e) => onSubmitClick(e)}>
               Signup

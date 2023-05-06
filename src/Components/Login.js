@@ -5,13 +5,16 @@ import { useNavigate } from "react-router";
 //components
 import InputField from "./InputField";
 
-function Login() {
+function Login({ setUser }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const onSubmitClick = (e) => {
     e.preventDefault();
+    setUser({ email: email, password: "1234", firstName: "Venura", lastName: "Warnasooriya", userid: "venura" });
+    window.localStorage.setItem("useremail", email);
+    navigate("/");
   };
 
   return (
@@ -19,8 +22,8 @@ function Login() {
       <div className="container">
         <div className="heading">Login</div>
         <Form>
-          <InputField type="email" content="Email" id="email" onChange={() => setEmail()} />
-          <InputField type="password" content="Password" id="password" onChange={() => setPassword()} />
+          <InputField type="email" content="Email" id="email" onChange={setEmail} />
+          <InputField type="password" content="Password" id="password" onChange={setPassword} />
           <div className="btn-container">
             <button type="submit" className="btn submit" onClick={(e) => onSubmitClick(e)}>
               Login
