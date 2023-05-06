@@ -42,6 +42,10 @@ function Post(props) {
   const [editedComment, setEditedComment] = useState("");
   const [commentDeleteClicked, setCommentDeleteClicked] = useState(false);
   const [defaultMessage, setDefaultMessage] = useState({ message: "", commentId: "" });
+  const [addReviewClicked, setAddReviewClicked] = useState(false);
+  const [newRatingValue, setNewRatingValue] = useState(0);
+  const [newReview, setNewReview] = useState("");
+  const [userAddedTheReview, setUserAddedTheReview] = useState(false);
 
   const post = props.post;
   const postID = post.id;
@@ -133,6 +137,10 @@ function Post(props) {
       time: Date.now(),
       rate: rate,
     };
+
+    setAddReviewClicked(false);
+    setUserAddedTheReview(true);
+
     axios
       .post("http://localhost:8080/addRating", data, {
         headers: {
@@ -430,90 +438,6 @@ function Post(props) {
             </div>
           </>
         )}
-        {/* {comments.map((comment, index) => ( 
-          <>
-            {index < allComments ? (
-              <div className="comment">
-                <div className="profile">
-                  <div className="dp">
-                    <img src={ProfilePic} alt="profile" />
-                  </div>
-                  {!editClicked ? (
-                    <div className="container">
-                      <div className="name">
-                        {comment.user_name}
-                        <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
-                      </div>
-                      <div className="comment">{comment.message}</div>
-                    </div>
-                  ) : (
-                    <div className="edit-section">
-                      <input type="text" name="edit" id="edit" defaultValue={comment.message} onChange={(e) => setEditedComment(e.target.value)} />
-                      <div className="btn-container">
-                        <div
-                          className="save btn"
-                          onClick={() => {
-                            onUpdateCommentClick(comment.id);
-                            editedComment ? (document.getElementById("edit").value = "") : <></>;
-                            setEditClicked(false);
-                          }}
-                        >
-                          <img src={Right} alt="correct" />
-                        </div>
-                        <div
-                          className="btn cancel"
-                          onClick={() => {
-                            document.getElementById("edit").value = "";
-                            setEditClicked(false);
-                          }}
-                        >
-                          <img src={Close} alt="close" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                {!editClicked ? (
-                  <>
-                    <div className={`edit-delete-section ${commentDeleteClicked ? "noHover" : ""}`}>
-                      <div
-                        className="edit"
-                        onClick={() => {
-                          !commentDeleteClicked ? setEditClicked(true) : onDeleteCommentClick(comment.id);
-                        }}
-                      >
-                        {commentDeleteClicked ? <img src={Right} alt="ok" /> : <img src={Edit} alt="edit" />}
-                      </div>
-                      <div
-                        className="delete"
-                        onClick={() => {
-                          commentDeleteClicked ? setCommentDeleteClicked(false) : <></>;
-                        }}
-                      >
-                        {commentDeleteClicked ? (
-                          <img src={Close} alt="no" />
-                        ) : (
-                          <img
-                            src={Delete}
-                            alt="delete"
-                            onClick={() => {
-                              setCommentDeleteClicked(true);
-                            }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </div>
-            ) : (
-              <></>
-            )}
-          </>
-        ))}
-        */}
       </CommentSection>
       {rateClicked ? (
         <Ratings rating="4.5">
@@ -529,7 +453,42 @@ function Post(props) {
               <Rating name="read-only" value={4.5} precision={0.5} readOnly size="large" />
             </div>
             <div className="btn-container">
-              <div className="add-review btn">Add Review</div>
+              {addReviewClicked ? (
+                <div className="addreview-container">
+                  <input type="text" name="new-review" onChange={(e) => setNewReview(e.target.value)} id="new-reivew" className="add-review" placeholder="Enter the New Review" />
+                  <Rating
+                    name="simple-controlled"
+                    onChange={(event, newValue) => {
+                      setNewRatingValue(newValue);
+                    }}
+                  />
+                  <div className="btn-container">
+                    <div
+                      className="send btn"
+                      onClick={() => {
+                        if (newReview) {
+                          addRating();
+                        }
+                      }}
+                    >
+                      Submit
+                    </div>
+                    <div className="cancel btn" onClick={() => setAddReviewClicked(false)}>
+                      Cancel
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {!userAddedTheReview ? (
+                    <div className="add-review btn" onClick={() => setAddReviewClicked(true)}>
+                      Add Review
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </>
+              )}
             </div>
             {showReviewsClicked ? (
               <div className="reviews-container">
@@ -1005,6 +964,38 @@ const Ratings = styled.div`
     .btn-container {
       width: 100%;
       margin-top: 20px;
+
+      .addreview-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        border-top: 1px solid gray;
+        padding-top: 20px;
+
+        input {
+          width: 100%;
+          margin-bottom: 10px;
+          height: 50px;
+          padding-inline: 20px;
+          border: none;
+          outline: none;
+          background-color: var(--background-color);
+        }
+
+        .btn-container {
+          display: flex;
+          column-gap: 20px;
+
+          .cancel {
+            background-color: var(--btn-danger);
+
+            &:hover {
+              background-color: var(--btn-danger-alt);
+            }
+          }
+        }
+      }
 
       .btn {
         height: 50px;
