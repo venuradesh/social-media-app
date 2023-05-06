@@ -14,9 +14,6 @@ import post from "../Data/Posts";
 import ProfilePic from "../assets/profile.png";
 
 function Profile({ user }) {
-  const [hotelname, setHotelname] = useState("");
-  const [desc, setDesc] = useState("");
-  const [userID, setUserID] = useState("samitha123");
   const [allPost, setAllPost] = useState([]);
   const [userDetailsfromAPI, setUserDetailsfromAPI] = useState({
     firstName: "",
@@ -28,14 +25,15 @@ function Profile({ user }) {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/getPosts`)
+      .get(`http://localhost:8080/getSingleUserPosts/${user.email}`)
       .then((res) => {
+        console.log(res.data);
         setAllPost([...res.data]);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [allPost]);
+  }, []);
 
   return (
     <Container>
@@ -51,7 +49,7 @@ function Profile({ user }) {
             </div>
           </div>
           <div className="email item">
-            Email: <span>{userDetailsfromAPI.email}</span>
+            Email: <span>{user.email}</span>
           </div>
           <div className="address item">
             Address: <span>{userDetailsfromAPI.address}</span>
@@ -61,10 +59,10 @@ function Profile({ user }) {
           </div>
         </div>
         <div className="posts-container">
-          <Post post={post} useId={userID} />
-          {/* {allPost.map((post, index) => (
-            <Post post={post} useId={userID} />
-          ))} */}
+          
+          {allPost.map((post, index) => (
+            <Post post={post} useId={user.id} />
+          ))}
         </div>
       </div>
     </Container>
