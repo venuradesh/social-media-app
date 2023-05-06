@@ -45,6 +45,7 @@ function Home() {
   };
 
   const convertBase64 = (e) => {
+    setFile(e.target.files[0]);
     var reader = new FileReader();
     reader.readAsDataURL(e.target.files[0]);
     reader.onload = () => {
@@ -55,12 +56,10 @@ function Home() {
     };
   };
   useEffect(() => {
-    setAllPost(post);
-
     axios
       .get(`http://localhost:8080/getPosts`)
       .then((res) => {
-        // setAllPost([...res.data]);
+        setAllPost([...res.data]);
       })
       .catch((err) => {
         console.log(err);
@@ -74,10 +73,10 @@ function Home() {
       </div>
       <div className="contents">
         <div className="posts-container">
-          <Post post={allPost} useId={userID} />
-          {/* {allPost.map((post, index) => (
+          {/* <Post post={allPost} useId={userID} /> */}
+          {allPost.map((post, index) => (
             <Post post={post} useId={userID} />
-          ))} */}
+          ))}
         </div>
         <div className="add-post-container">
           <div className="heading">Add a Post</div>

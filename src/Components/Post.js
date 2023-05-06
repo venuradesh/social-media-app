@@ -77,6 +77,7 @@ function Post(props) {
   };
 
   const onDeleteCommentClick = (id) => {
+    console.log(id);
     axios
       .delete(`http://localhost:8080/deleteComment/${id}`)
       .then((response) => {
@@ -88,11 +89,12 @@ function Post(props) {
   };
 
   const onUpdateCommentClick = () => {
+    console.log(commentId);
     axios
       .put("http://localhost:8080/editComment", {
         id: commentId,
         user_name: user_name,
-        message: newComment,
+        message: editedComment,
         time: Date.now(),
         postID: postID,
       })
@@ -137,9 +139,9 @@ function Post(props) {
     const data = {
       userID: user_name,
       resturantName: resturantName,
-      message: ratingMessage,
+      message: newReview,
       time: Date.now(),
-      rate: rate,
+      rate: newRatingValue,
     };
 
     setAddReviewClicked(false);
@@ -152,7 +154,6 @@ function Post(props) {
         },
       })
       .then((res) => {
-        console.log(res);
         setAllRatings([]);
       })
       .catch((err) => {
@@ -174,15 +175,15 @@ function Post(props) {
 
   const onUpdateRateClick = () => {
     setEditReviewClicked(false);
-
+    console.log(editRatingValue);
     axios
       .put("http://localhost:8080/updateRating", {
         id: rateId,
         userID: user_name,
         resturantName: resturantName,
-        message: ratingMessage,
+        message: edittedReview,
         time: Date.now(),
-        rate: rate,
+        rate: editRatingValue,
       })
       .then((res) => {
         console.log(res);
@@ -194,7 +195,7 @@ function Post(props) {
   };
   useEffect(() => {
     // localStorage.setItem("comments", JSON.stringify(allComments));
-    setComments(comment);
+    // setComments(comment);
     axios
       .get(`http://localhost:8080/getComments/${postID}`)
       .then((res) => {
@@ -230,11 +231,13 @@ function Post(props) {
   }, [likesCount]);
 
   const onRateClick = () => {
-    const r = 0;
+    setRateClicked(true);
+    var r = 1;
     allRatings.map((_rate) => {
-      r = r + _rate.rate;
+      r=parseInt(_rate.rate)+r;
     });
-    setOverallRate(r / allRatings.length);
+    var x= r / allRatings.length;
+    setOverallRate(x);
   };
 
   const onClickLike = (id) => {
@@ -276,6 +279,7 @@ function Post(props) {
       });
   };
 
+
   return (
     <Container>
       <div className="profile-container">
@@ -301,7 +305,7 @@ function Post(props) {
           <div className="res">
             <span>Resturant Name:</span> {post.resturantName}
           </div>
-          <div className="btn" onClick={() => setRateClicked(true)}>
+          <div className="btn" onClick={() => onRateClick() }>
             <img src={Star} alt="star" /> Rate
           </div>
         </div>
@@ -360,23 +364,32 @@ function Post(props) {
                       <div className="container">
                         <div className="name">
                           {comment.user_name}
-                          <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
+                          <div className="time">{moment(parseInt(comment.time)).fromNow()}</div>
                         </div>
                         <div className="comment">{comment.message}</div>
                       </div>
-                      <div className={`edit-delete-section ${commentDeleteClicked ? "noHover" : ""}`}>
-                        <div
+                      { user_name == comment.user_name || user_name == post.userID?
+                      (
+                        <div className={`edit-delete-section ${commentDeleteClicked ? "noHover" : ""}`}>
+                        { user_name == comment.user_name?(
+                          <div
                           className="edit"
                           onClick={() => {
                             setDefaultMessage({ message: comment.message, commentId: comment.id });
-                            !commentDeleteClicked ? setEditClicked(true) : onDeleteCommentClick(comment.id);
+                            setCommentId(comment.id); 
+                            !commentDeleteClicked ? setEditClicked(true) : <></>;
                           }}
                         >
                           {commentDeleteClicked ? <img src={Right} alt="ok" /> : <img src={Edit} alt="edit" />}
                         </div>
+                        ):
+                        <></>
+                        }
+                        
                         <div
                           className="delete"
                           onClick={() => {
+                            onDeleteCommentClick(comment.id);
                             commentDeleteClicked ? setCommentDeleteClicked(false) : <></>;
                           }}
                         >
@@ -393,6 +406,13 @@ function Post(props) {
                           )}
                         </div>
                       </div>
+
+                      ):
+                      (
+                        <></>
+                      )
+                      }
+                      
                     </div>
                   </div>
                 ) : (
@@ -446,17 +466,17 @@ function Post(props) {
         )}
       </CommentSection>
       {rateClicked ? (
-        <Ratings rating="4.5">
+        <Ratings ratings="4.5">
           <div className="container">
             <div className="close" onClick={() => setRateClicked(false)}>
               <img src={Close} alt="close" />
             </div>
             <div className="heading">
               Reviews and Ratings
-              <span>Hotel 5 Star</span>
+              <span>{resturantName}</span>
             </div>
             <div className="star-collection">
-              <Rating name="read-only" value={4.5} precision={0.5} readOnly size="large" />
+              <Rating name="read-only" value={overallRate} precision={0.5} readOnly size="large" />
             </div>
             <div className="btn-container">
               {addReviewClicked ? (
@@ -500,20 +520,23 @@ function Post(props) {
               <>
                 {!editReviewClicked ? (
                   <div className="reviews-container">
-                    {reviews.map((review, index) => (
+                    {allRatings.map((review) => (
                       <div className="review">
-                        <div className="profile">{review.username}</div>
-                        <div className="comment">{review.review}</div>
+                        <div className="profile">{review.userID}</div>
+                        <div className="comment">{review.message}</div>
                         <div className="rating">
-                          <Rating name="read-only" value={review.rating} readOnly size="large" />
+                          <Rating name="read-only" value={review.rate} readOnly size="large" />
                         </div>
-                        <div className="edit-section">
+                        { user_name == review.userID?(
+                          <div className="edit-section">
+
                           <div
                             className="edit btn"
                             onClick={() => {
+                              setRateId(review.id);
                               setEditReviewClicked(true);
-                              setDefaultReview(review.review);
-                              setEditRatingValue(review.rating);
+                              setDefaultReview(review.message);
+                              setEditRatingValue(review.rate);
                             }}
                           >
                             <img src={Edit} alt="edit" />
@@ -522,6 +545,10 @@ function Post(props) {
                             <img src={Delete} alt="delete" />
                           </div>
                         </div>
+                        ):
+                        <></>
+                        }
+                        
                       </div>
                     ))}
                   </div>
