@@ -145,6 +145,7 @@ const Container = styled.div`
       background-color: var(--post-background);
       box-shadow: 0 2px 5px 0px lightgray;
       padding: 20px 30px;
+      z-index: 10;
 
       .heading {
         font-size: 1.4rem;
