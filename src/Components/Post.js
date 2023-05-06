@@ -41,6 +41,7 @@ function Post(props) {
   const [editClicked, setEditClicked] = useState(false);
   const [editedComment, setEditedComment] = useState("");
   const [commentDeleteClicked, setCommentDeleteClicked] = useState(false);
+  const [defaultMessage, setDefaultMessage] = useState({ message: "", commentId: "" });
 
   const post = props.post;
   const postID = post.id;
@@ -319,14 +320,117 @@ function Post(props) {
               <img src={ProfilePic} alt="profile" />
             </div>
             <input type="text" placeholder="Enter your comment" id="comment" onChange={(e) => setNewComment(e.target.value)} />
-            <div className="btn">
-              <img src={Send} alt="send" onClick={addComment} />
+            <div
+              className="btn"
+              onClick={() => {
+                addComment();
+                document.getElementById("comment").value = "";
+              }}
+            >
+              <img src={Send} alt="send" />
             </div>
           </NewComment>
         ) : (
           <></>
         )}
-        {comments.map((comment, index) => (
+        {!editClicked ? (
+          <>
+            {comments.map((comment, index) => (
+              <>
+                {index < allComments ? (
+                  <div className="comment">
+                    <div className="profile">
+                      <div className="dp">
+                        <img src={ProfilePic} alt="profile" />
+                      </div>
+                      <div className="container">
+                        <div className="name">
+                          {comment.user_name}
+                          <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
+                        </div>
+                        <div className="comment">{comment.message}</div>
+                      </div>
+                      <div className={`edit-delete-section ${commentDeleteClicked ? "noHover" : ""}`}>
+                        <div
+                          className="edit"
+                          onClick={() => {
+                            setDefaultMessage({ message: comment.message, commentId: comment.id });
+                            !commentDeleteClicked ? setEditClicked(true) : onDeleteCommentClick(comment.id);
+                          }}
+                        >
+                          {commentDeleteClicked ? <img src={Right} alt="ok" /> : <img src={Edit} alt="edit" />}
+                        </div>
+                        <div
+                          className="delete"
+                          onClick={() => {
+                            commentDeleteClicked ? setCommentDeleteClicked(false) : <></>;
+                          }}
+                        >
+                          {commentDeleteClicked ? (
+                            <img src={Close} alt="no" />
+                          ) : (
+                            <img
+                              src={Delete}
+                              alt="delete"
+                              onClick={() => {
+                                setCommentDeleteClicked(true);
+                              }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </>
+            ))}
+            {comments.length > 2 ? (
+              <>
+                {allComments == 2 ? (
+                  <div className="see-more" onClick={() => setAllComments(comments.length)}>
+                    See more comments
+                  </div>
+                ) : (
+                  <div className="see-more" onClick={() => setAllComments(2)}>
+                    See less comments
+                  </div>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="edit-section">
+              <input type="text" id="edit" defaultValue={defaultMessage.message} onChange={(e) => setEditedComment(e.target.value)} />
+              <div className="btn-container">
+                <div
+                  className="save btn"
+                  onClick={() => {
+                    editedComment ? onUpdateCommentClick() : <></>;
+                    editedComment ? (document.getElementById("edit").value = "") : <></>;
+                    setEditClicked(false);
+                  }}
+                >
+                  <img src={Right} alt="correct" />
+                </div>
+                <div
+                  className="btn cancel"
+                  onClick={() => {
+                    document.getElementById("edit").value = "";
+                    setEditClicked(false);
+                  }}
+                >
+                  <img src={Close} alt="close" />
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+        {/* {comments.map((comment, index) => ( 
           <>
             {index < allComments ? (
               <div className="comment">
@@ -409,21 +513,7 @@ function Post(props) {
             )}
           </>
         ))}
-        {comments.length > 2 ? (
-          <>
-            {allComments == 2 ? (
-              <div className="see-more" onClick={() => setAllComments(comments.length)}>
-                See more comments
-              </div>
-            ) : (
-              <div className="see-more" onClick={() => setAllComments(2)}>
-                See less comments
-              </div>
-            )}
-          </>
-        ) : (
-          <></>
-        )}
+        */}
       </CommentSection>
       {rateClicked ? (
         <Ratings rating="4.5">
@@ -682,6 +772,48 @@ const CommentSection = styled.div`
   padding-inline: 20px;
   font-size: 0.8rem;
 
+  .edit-section {
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+    width: 100%;
+    height: 60px;
+    margin-bottom: 20px;
+
+    input {
+      width: 100%;
+      height: 45px;
+      border-radius: 50px;
+      border: none;
+      outline: none;
+      background-color: var(--background-color);
+      padding-inline: 20px;
+    }
+
+    .btn-container {
+      display: flex;
+      height: 100%;
+
+      .btn {
+        height: 100%;
+        width: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--background-color);
+        }
+      }
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
   .comment {
     padding-bottom: 10px;
     position: relative;
@@ -698,45 +830,6 @@ const CommentSection = styled.div`
       display: flex;
       column-gap: 20px;
       width: 100%;
-
-      .edit-section {
-        display: flex;
-        column-gap: 20px;
-        width: 100%;
-
-        input {
-          width: 100%;
-          height: 45px;
-          border-radius: 50px;
-          border: none;
-          outline: none;
-          background-color: var(--background-color);
-          padding-inline: 20px;
-        }
-
-        .btn-container {
-          display: flex;
-          height: 100%;
-
-          .btn {
-            height: 100%;
-            width: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-
-            &:hover {
-              background-color: var(--background-color);
-            }
-          }
-
-          img {
-            width: 20px;
-            height: 20px;
-          }
-        }
-      }
 
       img {
         width: 40px;
@@ -798,6 +891,8 @@ const CommentSection = styled.div`
 
       img {
         width: 20px;
+        height: 20px;
+        object-fit: cover;
       }
     }
   }
@@ -834,6 +929,7 @@ const NewComment = styled.div`
   .btn {
     display: flex;
     align-items: center;
+    cursor: pointer;
   }
 
   input {
