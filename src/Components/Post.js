@@ -17,10 +17,7 @@ import Delete from "../assets/delete.png";
 import Right from "../assets/right.png";
 
 //comment data
-import reviews from "../Data/reviews";
-import comment from "../Data/Comment";
 
-const userid = "ahfbx";
 
 function Post(props) {
   const [optionsClicked, setOptionsClicked] = useState(false);
@@ -31,8 +28,6 @@ function Post(props) {
   const [showReviewsClicked, setShowReviewsClicked] = useState(false);
   const [comments, setComments] = useState([]);
   const [commentId, setCommentId] = useState("");
-  const [ratingMessage, setRatingMessage] = useState("");
-  const [rate, setRate] = useState(0);
   const [rateId, setRateId] = useState("");
   const [allRatings, setAllRatings] = useState([]);
   const [overallRate, setOverallRate] = useState(0);
@@ -195,7 +190,6 @@ function Post(props) {
   };
   useEffect(() => {
     // localStorage.setItem("comments", JSON.stringify(allComments));
-    setComments(comment);
     axios
       .get(`http://localhost:8080/getComments/${postID}`)
       .then((res) => {
@@ -223,6 +217,7 @@ function Post(props) {
     axios
       .get(`http://localhost:8080/getLikes/${postID}`)
       .then((res) => {
+        console.log(res.data);
         setLikesCount(res.data);
       })
       .catch((err) => {
@@ -232,6 +227,7 @@ function Post(props) {
 
   const onRateClick = () => {
     setRateClicked(true);
+    setAllRatings([]);
     var r = 1;
     allRatings.map((_rate) => {
       r = parseInt(_rate.rate) + r;
@@ -240,20 +236,13 @@ function Post(props) {
     setOverallRate(x);
   };
 
-  const onClickLike = (id) => {
-    if (isLiked) {
-      removeLike();
-    } else {
-      addLike();
-    }
-  };
 
   const addLike = () => {
     const data = {
-      userID: user_name,
-      postID: postID,
+      userId: user_name,
+      postId: postID,
     };
-
+    
     axios
       .post(`http://localhost:8080/addLike`, data, {
         headers: {
@@ -261,6 +250,8 @@ function Post(props) {
         },
       })
       .then((res) => {
+        console.log(res.data);
+        setIsLiked(true);
         setLikesCount(0);
       })
       .catch((err) => {
@@ -268,10 +259,12 @@ function Post(props) {
       });
   };
 
-  const removeLike = (id) => {
+  const removeLike = (user_id,post_id) => {
     axios
-      .delete(`http://localhost:8080/removeLike/${id}`)
+      .delete(`http://localhost:8080/removeLike/${user_id}/${post_id}`)
       .then((response) => {
+        console.log(response.data);
+        setIsLiked(false)
         setLikesCount(0);
       })
       .catch((error) => {
@@ -285,7 +278,7 @@ function Post(props) {
         <div className="name-container" onClick={() => setOptionsClicked(false)}>
           <div className="profile-image"></div>
           <div className="profile-name">
-            <div className="name">Venura Warnasooriya</div>
+            <div className="name">{post.userID}</div>
             <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
           </div>
         </div>
@@ -322,7 +315,7 @@ function Post(props) {
         </div>
       </div>
       <div className="like-comment-section">
-        <div className={`btn ${isLiked ? "active" : ""}`} onClick={() => (isLiked ? setIsLiked(false) : setIsLiked(true))}>
+        <div className={`btn ${isLiked ? "active" : ""}`} onClick={() => (isLiked ? removeLike(user_name,postID) : addLike())}>
           <img src={Like} alt="like" /> Like
         </div>
         <div className="btn" onClick={() => (newCommentClicked ? setNewCommentClicked(false) : setNewCommentClicked(true))}>

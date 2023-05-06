@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router";
+import axios from "axios";
 
 //components
 import InputField from "./InputField";
@@ -17,10 +18,55 @@ function Signup() {
   const [address, setAddress] = useState("");
   const [confimePassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [allreadyHave, setAllReadyHave] = useState(false);
 
   const onSubmitClick = (e) => {
     e.preventDefault();
+    axios
+      .get(`http://localhost:8080/getUser/${email}`)
+      .then((res) => {
+        res.data.length? setAllReadyHave(true) : setAllReadyHave(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    
   };
+
+  useEffect(() => {
+    if(!allreadyHave){
+      if(password == confimePassword){
+        const data = {
+          userName: email,
+          password: password,
+          address: address,
+          fName: firstname,
+          lName: lastname,
+          dob: dob,
+        };
+        axios
+          .post("http://localhost:8080/addUser", data, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((res) => {
+            navigate("/login");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      else{
+        console.log("password dosen't match");
+      }
+      
+    }
+    else{
+      console.log("already have account");
+    }
+  }, [allreadyHave]);
 
   return (
     <Container>

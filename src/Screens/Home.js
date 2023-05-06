@@ -7,17 +7,15 @@ import Header from "../Components/Header";
 import InputField from "../Components/InputField";
 import axios from "axios";
 
-//data
-import post from "../Data/Posts";
 
 function Home({ user }) {
   const [hotelname, setHotelname] = useState("");
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState("");
   const [file, setFile] = useState(null);
-  const [userID, setUserID] = useState("samitha123");
+  const [userID, setUserID] = useState(user.email);
   const [allPost, setAllPost] = useState([]);
-
+  
   const onSubmitClick = () => {
     document.getElementById("hotelname").value = "";
     document.getElementById("desc").value = "";
@@ -73,10 +71,9 @@ function Home({ user }) {
       </div>
       <div className="contents">
         <div className="posts-container">
-          <Post post={post} useId={userID} />
-          {/* {allPost.map((post, index) => (
+          {allPost.map((post, index) => (
             <Post post={post} useId={userID} />
-          ))} */}
+          ))}
         </div>
         <div className="add-post-container">
           <div className="heading">Add a Post</div>

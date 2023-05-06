@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router";
+import axios from "axios";
 
 //components
 import InputField from "./InputField";
@@ -12,9 +13,30 @@ function Login({ setUser }) {
 
   const onSubmitClick = (e) => {
     e.preventDefault();
-    setUser({ email: email, password: "1234", firstName: "Venura", lastName: "Warnasooriya", userid: "venura" });
-    window.localStorage.setItem("useremail", email);
-    navigate("/");
+    axios
+      .get(`http://localhost:8080/getUser/${email}`)
+      .then((res) => {
+        if(res.data[0].password == password){
+          setUser({ 
+            email: res.data[0].userName,
+            password: res.data[0].password,
+            firstName: res.data[0].fName, 
+            lastName: res.data[0].lName,
+            userid: res.data[0].id
+          });
+          window.localStorage.setItem("useremail", email);
+          navigate("/");
+          console.log(res.data[0].userName);
+        }
+        else{
+          console.log("password dosen't match");
+        }
+        
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    
   };
 
   return (
