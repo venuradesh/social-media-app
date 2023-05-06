@@ -13,9 +13,12 @@ import Comment from "../assets/comment.png";
 import Send from "../assets/send.png";
 import Close from "../assets/close.png";
 import Edit from "../assets/edit.png";
+import Delete from "../assets/delete.png";
+import Right from "../assets/right.png";
 
 //comment data
 import reviews from "../Data/reviews";
+import comment from "../Data/Comment";
 
 const userid = "ahfbx";
 
@@ -35,41 +38,44 @@ function Post(props) {
   const [overallRate, setOverallRate] = useState(0);
   const [likesCount, setLikesCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
-  
-  
+  const [editClicked, setEditClicked] = useState(false);
+  const [editedComment, setEditedComment] = useState("");
+  const [commentDeleteClicked, setCommentDeleteClicked] = useState(false);
+
   const post = props.post;
   const postID = post.id;
   const user_name = props.useId;
-  const resturantName=post.resturantName;
-  const addComment = () =>{
+  const resturantName = post.resturantName;
+  const addComment = () => {
     const data = {
       user_name: user_name,
       message: newComment,
       time: Date.now(),
-      postID:postID
+      postID: postID,
     };
     axios
-        .post("http://localhost:8080/addComment", data, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          setComments([]);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      .post("http://localhost:8080/addComment", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        setComments([]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const onDeleteCommentClick = (id) => {
-    axios.delete(`http://localhost:8080/deleteComment/${id}`)
-    .then(response => {
-      setComments([]);
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    axios
+      .delete(`http://localhost:8080/deleteComment/${id}`)
+      .then((response) => {
+        setComments([]);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const onUpdateCommentClick = () => {
@@ -79,7 +85,7 @@ function Post(props) {
         user_name: user_name,
         message: newComment,
         time: Date.now(),
-        postID:postID
+        postID: postID,
       })
       .then((res) => {
         setComments([]);
@@ -90,13 +96,14 @@ function Post(props) {
   };
 
   const onDeletePostClick = (id) => {
-    axios.delete(`http://localhost:8080/deletePost/${id}`)
-    .then(response => {
-      console.log(response);
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    axios
+      .delete(`http://localhost:8080/deletePost/${id}`)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const onUpdatePostClick = () => {
@@ -106,7 +113,7 @@ function Post(props) {
         user_name: user_name,
         message: newComment,
         time: Date.now(),
-        postID:postID
+        postID: postID,
       })
       .then((res) => {
         setComments([]);
@@ -117,39 +124,39 @@ function Post(props) {
       });
   };
 
-  const addRating = () =>{
+  const addRating = () => {
     const data = {
       userID: user_name,
-      resturantName:resturantName,
+      resturantName: resturantName,
       message: ratingMessage,
       time: Date.now(),
-      rate: rate
-  
+      rate: rate,
     };
     axios
-        .post("http://localhost:8080/addRating", data, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          console.log(res);
-          setAllRatings([]);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      .post("http://localhost:8080/addRating", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setAllRatings([]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const onDeleteRateClick = (id) => {
-    axios.delete(`http://localhost:8080/deleteRating/${id}`)
-    .then(response => {
-      console.log(response);
-      setAllRatings([]);
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    axios
+      .delete(`http://localhost:8080/deleteRating/${id}`)
+      .then((response) => {
+        console.log(response);
+        setAllRatings([]);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const onUpdateRateClick = () => {
@@ -157,10 +164,10 @@ function Post(props) {
       .put("http://localhost:8080/updateRating", {
         id: rateId,
         userID: user_name,
-        resturantName:resturantName,
+        resturantName: resturantName,
         message: ratingMessage,
         time: Date.now(),
-        rate: rate
+        rate: rate,
       })
       .then((res) => {
         console.log(res);
@@ -172,6 +179,7 @@ function Post(props) {
   };
   useEffect(() => {
     // localStorage.setItem("comments", JSON.stringify(allComments));
+    setComments(comment);
     axios
       .get(`http://localhost:8080/getComments/${postID}`)
       .then((res) => {
@@ -206,29 +214,28 @@ function Post(props) {
       });
   }, [likesCount]);
 
-  const onRateClick = () =>{
-    const r=0;
+  const onRateClick = () => {
+    const r = 0;
     allRatings.map((_rate) => {
       r = r + _rate.rate;
     });
-    setOverallRate(r/allRatings.length);
+    setOverallRate(r / allRatings.length);
   };
 
-  const onClickLike = (id) =>{
-    if(isLiked){
+  const onClickLike = (id) => {
+    if (isLiked) {
       removeLike();
-    }
-    else{
+    } else {
       addLike();
     }
-  }
+  };
 
-  const addLike = () =>{
-    data={
+  const addLike = () => {
+    const data = {
       userID: user_name,
-      postID:postID
-    }
-      
+      postID: postID,
+    };
+
     axios
       .post(`http://localhost:8080/addLike`, data, {
         headers: {
@@ -241,20 +248,19 @@ function Post(props) {
       .catch((err) => {
         console.log(err);
       });
-    
-  }
+  };
 
-  const removeLike = (id) =>{
-    axios.delete(`http://localhost:8080/removeLike/${id}`)
-    .then(response => {
-      setLikesCount(0);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-    
-  }
-  
+  const removeLike = (id) => {
+    axios
+      .delete(`http://localhost:8080/removeLike/${id}`)
+      .then((response) => {
+        setLikesCount(0);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
     <Container>
       <div className="profile-container">
@@ -286,15 +292,15 @@ function Post(props) {
         </div>
         <div className="desc-food">{post.description}</div>
       </Description>
-      <PostContainer source={post.iamge}>
-      </PostContainer>
+      <PostContainer source={post.image}></PostContainer>
       <div className="like-count">
         <div className="like">
           <img src={Like} alt="like" />
           {likesCount}
         </div>
         <div className="comment">
-          <img src={Comment} alt="comment" />{comments.length}
+          <img src={Comment} alt="comment" />
+          {comments.length}
         </div>
       </div>
       <div className="like-comment-section">
@@ -328,14 +334,75 @@ function Post(props) {
                   <div className="dp">
                     <img src={ProfilePic} alt="profile" />
                   </div>
-                  <div className="container">
-                    <div className="name">
-                      {comment.user_name}
-                      <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
+                  {!editClicked ? (
+                    <div className="container">
+                      <div className="name">
+                        {comment.user_name}
+                        <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
+                      </div>
+                      <div className="comment">{comment.message}</div>
                     </div>
-                    <div className="comment">{comment.message}</div>
-                  </div>
+                  ) : (
+                    <div className="edit-section">
+                      <input type="text" name="edit" id="edit" defaultValue={comment.message} onChange={(e) => setEditedComment(e.target.value)} />
+                      <div className="btn-container">
+                        <div
+                          className="save btn"
+                          onClick={() => {
+                            onUpdateCommentClick(comment.id);
+                            editedComment ? (document.getElementById("edit").value = "") : <></>;
+                            setEditClicked(false);
+                          }}
+                        >
+                          <img src={Right} alt="correct" />
+                        </div>
+                        <div
+                          className="btn cancel"
+                          onClick={() => {
+                            document.getElementById("edit").value = "";
+                            setEditClicked(false);
+                          }}
+                        >
+                          <img src={Close} alt="close" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
+                {!editClicked ? (
+                  <>
+                    <div className={`edit-delete-section ${commentDeleteClicked ? "noHover" : ""}`}>
+                      <div
+                        className="edit"
+                        onClick={() => {
+                          !commentDeleteClicked ? setEditClicked(true) : onDeleteCommentClick(comment.id);
+                        }}
+                      >
+                        {commentDeleteClicked ? <img src={Right} alt="ok" /> : <img src={Edit} alt="edit" />}
+                      </div>
+                      <div
+                        className="delete"
+                        onClick={() => {
+                          commentDeleteClicked ? setCommentDeleteClicked(false) : <></>;
+                        }}
+                      >
+                        {commentDeleteClicked ? (
+                          <img src={Close} alt="no" />
+                        ) : (
+                          <img
+                            src={Delete}
+                            alt="delete"
+                            onClick={() => {
+                              setCommentDeleteClicked(true);
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
               </div>
             ) : (
               <></>
@@ -603,7 +670,7 @@ const Description = styled.div`
 const PostContainer = styled.div`
   width: 100%;
   height: 300px;
-  background-image: url(${props => props.source});
+  background-image: url(${(props) => props.source});
   background-size: cover;
   background-position: center;
   margin-top: 20px;
@@ -617,10 +684,59 @@ const CommentSection = styled.div`
 
   .comment {
     padding-bottom: 10px;
+    position: relative;
+    overflow-x: hidden;
+    width: 100%;
+
+    &:not(.noHover):hover {
+      .edit-delete-section {
+        right: 0;
+      }
+    }
 
     .profile {
       display: flex;
       column-gap: 20px;
+      width: 100%;
+
+      .edit-section {
+        display: flex;
+        column-gap: 20px;
+        width: 100%;
+
+        input {
+          width: 100%;
+          height: 45px;
+          border-radius: 50px;
+          border: none;
+          outline: none;
+          background-color: var(--background-color);
+          padding-inline: 20px;
+        }
+
+        .btn-container {
+          display: flex;
+          height: 100%;
+
+          .btn {
+            height: 100%;
+            width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &:hover {
+              background-color: var(--background-color);
+            }
+          }
+
+          img {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
 
       img {
         width: 40px;
@@ -651,6 +767,37 @@ const CommentSection = styled.div`
         .comment {
           font-size: 0.7rem;
         }
+      }
+    }
+
+    .edit-delete-section {
+      display: flex;
+      position: absolute;
+      right: -100%;
+      top: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+
+      .edit,
+      .delete {
+        background-color: var(--background-color);
+        height: calc(100% - 10px);
+        padding-inline: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(-5px);
+        cursor: pointer;
+
+        &:hover {
+          background-color: lightgray;
+        }
+      }
+
+      img {
+        width: 20px;
       }
     }
   }
