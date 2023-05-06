@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 
-function InputField({ type, id, content, onChange, hover }) {
+function InputField({ type, id, content, onChange, hover, value }) {
   return (
     <Container>
-      <input type={type} name={id} id={id} required autoComplete="off" onChange={(e) => onChange(e.target.value)} />
+      <input type={type} name={id} id={id} defaultValue={value} required autoComplete="off" onChange={(e) => onChange(e.target.value)} />
       <label htmlFor={id}>
         <span className={`${hover ? "active" : ""}`}>{content}</span>
       </label>
@@ -19,6 +19,7 @@ const Container = styled.div`
   position: relative;
   height: max-content;
   overflow: hidden;
+  z-index: -1;
 
   input {
     width: 100%;
