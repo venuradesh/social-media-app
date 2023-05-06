@@ -518,7 +518,7 @@ function Post(props) {
                           >
                             <img src={Edit} alt="edit" />
                           </div>
-                          <div className="delete btn">
+                          <div className="delete btn" onClick={() => onDeleteRateClick(review.id)}>
                             <img src={Delete} alt="delete" />
                           </div>
                         </div>
@@ -544,7 +544,7 @@ function Post(props) {
                           }
                         }}
                       >
-                        Submit
+                        Save
                       </div>
                       <div className="cancel btn" onClick={() => setEditReviewClicked(false)}>
                         Cancel
@@ -984,6 +984,8 @@ const Ratings = styled.div`
       align-items: center;
       justify-content: center;
       flex-direction: column;
+      padding-top: 10px;
+      border-top: 1px solid lightgray;
 
       input {
         width: 100%;
