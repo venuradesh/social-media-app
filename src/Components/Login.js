@@ -5,18 +5,10 @@ import { useNavigate } from "react-router";
 //components
 import InputField from "./InputField";
 
-//images
-import Google from "../assets/google.png";
-
-function Signup() {
+function Login() {
   const navigate = useNavigate();
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [password, setPassword] = useState("");
-  const [dob, setDob] = useState("");
-  const [address, setAddress] = useState("");
-  const [confimePassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onSubmitClick = (e) => {
     e.preventDefault();
@@ -25,25 +17,20 @@ function Signup() {
   return (
     <Container>
       <div className="container">
-        <div className="heading">Sign Up</div>
+        <div className="heading">Login</div>
         <Form>
-          <InputField type="text" content="First Name" id="firstname" onChange={() => setFirstname()} />
-          <InputField type="text" content="Last Name" id="lastname" onChange={() => setLastname()} />
-          <InputField type="date" hover={true} content="Date of Birth" id="dob" onChange={() => setDob()} />
-          <InputField type="text" content="Address" id="address" onChange={() => setAddress()} />
           <InputField type="email" content="Email" id="email" onChange={() => setEmail()} />
           <InputField type="password" content="Password" id="password" onChange={() => setPassword()} />
-          <InputField type="password" content="Confirm Password" id="cpassword" onChange={() => setConfirmPassword()} />
           <div className="btn-container">
             <button type="submit" className="btn submit" onClick={(e) => onSubmitClick(e)}>
-              Signup
+              Login
             </button>
             <button type="reset" className="btn clear">
               Clear
             </button>
           </div>
-          <div className="have-acc" onClick={() => navigate("/login")}>
-            Already have an account
+          <div className="have-acc" onClick={() => navigate("/signup")}>
+            Create an Account
           </div>
         </Form>
       </div>
@@ -51,7 +38,7 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Login;
 
 const Container = styled.div`
   width: 100vw;
