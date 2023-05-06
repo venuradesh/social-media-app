@@ -53,6 +53,7 @@ function Home({ user }) {
       console.log("Error : ", error);
     };
   };
+
   useEffect(() => {
     axios
       .get(`http://localhost:8080/getPosts`)

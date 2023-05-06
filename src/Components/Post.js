@@ -587,7 +587,7 @@ const Container = styled.div`
   height: max-content;
   min-height: 200px;
   background-color: var(--post-background);
-  z-index: 10;
+  z-index: 0;
   overflow: hidden;
   box-shadow: 0 2px 5px 0px lightgray;
   position: relative;
