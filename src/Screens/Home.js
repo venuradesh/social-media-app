@@ -7,6 +7,9 @@ import Header from "../Components/Header";
 import InputField from "../Components/InputField";
 import axios from "axios";
 
+//data
+import post from "../Data/Posts";
+
 function Home() {
   const [hotelname, setHotelname] = useState("");
   const [desc, setDesc] = useState("");
@@ -16,49 +19,48 @@ function Home() {
   const [allPost, setAllPost] = useState([]);
 
   const onSubmitClick = () => {
-  
     const data = {
       userID: userID,
       resturantName: hotelname,
       description: desc,
       time: Date.now(),
-      image:image
+      image: image,
     };
 
     axios
-        .post("http://localhost:8080/addPost", data, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      .post("http://localhost:8080/addPost", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {})
+      .catch((err) => {
+        console.log(err);
+      });
     setAllPost([]);
   };
 
-
-  const convertBase64 = (e) =>{
+  const convertBase64 = (e) => {
     var reader = new FileReader();
     reader.readAsDataURL(e.target.files[0]);
     reader.onload = () => {
-      setImage(reader.result)
-    }
-    reader.onerror = error =>{
-      console.log("Error : ",error);
-    }
-  }
+      setImage(reader.result);
+    };
+    reader.onerror = (error) => {
+      console.log("Error : ", error);
+    };
+  };
   useEffect(() => {
+    setAllPost(post);
+
     axios
-    .get(`http://localhost:8080/getPosts`)
-    .then((res) => {
-      setAllPost([...res.data]);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .get(`http://localhost:8080/getPosts`)
+      .then((res) => {
+        // setAllPost([...res.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [allPost]);
 
   return (
@@ -68,11 +70,10 @@ function Home() {
       </div>
       <div className="contents">
         <div className="posts-container">
-        {allPost.map((post, index) => (
-            <Post post={post} useId={userID}/>
-          )
-          )
-        }
+          <Post post={allPost} useId={userID} />
+          {/* {allPost.map((post, index) => (
+            <Post post={post} useId={userID} />
+          ))} */}
         </div>
         <div className="add-post-container">
           <div className="heading">Add a Post</div>
