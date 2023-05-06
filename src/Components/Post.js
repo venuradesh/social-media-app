@@ -195,7 +195,7 @@ function Post(props) {
   };
   useEffect(() => {
     // localStorage.setItem("comments", JSON.stringify(allComments));
-    // setComments(comment);
+    setComments(comment);
     axios
       .get(`http://localhost:8080/getComments/${postID}`)
       .then((res) => {
@@ -234,9 +234,9 @@ function Post(props) {
     setRateClicked(true);
     var r = 1;
     allRatings.map((_rate) => {
-      r=parseInt(_rate.rate)+r;
+      r = parseInt(_rate.rate) + r;
     });
-    var x= r / allRatings.length;
+    var x = r / allRatings.length;
     setOverallRate(x);
   };
 
@@ -279,7 +279,6 @@ function Post(props) {
       });
   };
 
-
   return (
     <Container>
       <div className="profile-container">
@@ -305,7 +304,7 @@ function Post(props) {
           <div className="res">
             <span>Resturant Name:</span> {post.resturantName}
           </div>
-          <div className="btn" onClick={() => onRateClick() }>
+          <div className="btn" onClick={() => onRateClick()}>
             <img src={Star} alt="star" /> Rate
           </div>
         </div>
@@ -323,7 +322,7 @@ function Post(props) {
         </div>
       </div>
       <div className="like-comment-section">
-        <div className="btn">
+        <div className={`btn ${isLiked ? "active" : ""}`} onClick={() => (isLiked ? setIsLiked(false) : setIsLiked(true))}>
           <img src={Like} alt="like" /> Like
         </div>
         <div className="btn" onClick={() => (newCommentClicked ? setNewCommentClicked(false) : setNewCommentClicked(true))}>
@@ -368,51 +367,46 @@ function Post(props) {
                         </div>
                         <div className="comment">{comment.message}</div>
                       </div>
-                      { user_name == comment.user_name || user_name == post.userID?
-                      (
+                      {user_name == comment.user_name || user_name == post.userID ? (
                         <div className={`edit-delete-section ${commentDeleteClicked ? "noHover" : ""}`}>
-                        { user_name == comment.user_name?(
-                          <div
-                          className="edit"
-                          onClick={() => {
-                            setDefaultMessage({ message: comment.message, commentId: comment.id });
-                            setCommentId(comment.id); 
-                            !commentDeleteClicked ? setEditClicked(true) : <></>;
-                          }}
-                        >
-                          {commentDeleteClicked ? <img src={Right} alt="ok" /> : <img src={Edit} alt="edit" />}
-                        </div>
-                        ):
-                        <></>
-                        }
-                        
-                        <div
-                          className="delete"
-                          onClick={() => {
-                            onDeleteCommentClick(comment.id);
-                            commentDeleteClicked ? setCommentDeleteClicked(false) : <></>;
-                          }}
-                        >
-                          {commentDeleteClicked ? (
-                            <img src={Close} alt="no" />
-                          ) : (
-                            <img
-                              src={Delete}
-                              alt="delete"
+                          {user_name == comment.user_name ? (
+                            <div
+                              className="edit"
                               onClick={() => {
-                                setCommentDeleteClicked(true);
+                                setDefaultMessage({ message: comment.message, commentId: comment.id });
+                                setCommentId(comment.id);
+                                !commentDeleteClicked ? setEditClicked(true) : <></>;
                               }}
-                            />
+                            >
+                              {commentDeleteClicked ? <img src={Right} alt="ok" /> : <img src={Edit} alt="edit" />}
+                            </div>
+                          ) : (
+                            <></>
                           )}
-                        </div>
-                      </div>
 
-                      ):
-                      (
+                          <div
+                            className="delete"
+                            onClick={() => {
+                              onDeleteCommentClick(comment.id);
+                              commentDeleteClicked ? setCommentDeleteClicked(false) : <></>;
+                            }}
+                          >
+                            {commentDeleteClicked ? (
+                              <img src={Close} alt="no" />
+                            ) : (
+                              <img
+                                src={Delete}
+                                alt="delete"
+                                onClick={() => {
+                                  setCommentDeleteClicked(true);
+                                }}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      ) : (
                         <></>
-                      )
-                      }
-                      
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -527,28 +521,26 @@ function Post(props) {
                         <div className="rating">
                           <Rating name="read-only" value={review.rate} readOnly size="large" />
                         </div>
-                        { user_name == review.userID?(
+                        {user_name == review.userID ? (
                           <div className="edit-section">
-
-                          <div
-                            className="edit btn"
-                            onClick={() => {
-                              setRateId(review.id);
-                              setEditReviewClicked(true);
-                              setDefaultReview(review.message);
-                              setEditRatingValue(review.rate);
-                            }}
-                          >
-                            <img src={Edit} alt="edit" />
+                            <div
+                              className="edit btn"
+                              onClick={() => {
+                                setRateId(review.id);
+                                setEditReviewClicked(true);
+                                setDefaultReview(review.message);
+                                setEditRatingValue(review.rate);
+                              }}
+                            >
+                              <img src={Edit} alt="edit" />
+                            </div>
+                            <div className="delete btn" onClick={() => onDeleteRateClick(review.id)}>
+                              <img src={Delete} alt="delete" />
+                            </div>
                           </div>
-                          <div className="delete btn" onClick={() => onDeleteRateClick(review.id)}>
-                            <img src={Delete} alt="delete" />
-                          </div>
-                        </div>
-                        ):
-                        <></>
-                        }
-                        
+                        ) : (
+                          <></>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -736,6 +728,10 @@ const Container = styled.div`
       padding-bottom: 10px;
       padding-top: 10px;
       cursor: pointer;
+
+      &.active {
+        background-color: var(--background-color);
+      }
 
       &:hover {
         background-color: var(--background-color);
