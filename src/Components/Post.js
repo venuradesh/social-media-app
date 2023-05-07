@@ -227,12 +227,9 @@ function Post(props) {
   }, [allRatings]);
 
   useEffect(() => {
-    // localStorage.setItem("comments", JSON.stringify(allComments));
-    console.log("change");
     axios
       .get(`http://localhost:8080/getLikes/${postID}`)
       .then((res) => {
-        console.log(res.data);
         setLikesCount(res.data);
       })
       .catch((err) => {
@@ -241,12 +238,10 @@ function Post(props) {
   }, [likesCount]);
 
   useEffect(() => {
-    // localStorage.setItem("comments", JSON.stringify(allComments));
-    console.log("change");
     axios
       .get(`http://localhost:8080/getUserLike/${postID}/${user_name}`)
       .then((res) => {
-        res.data.length == 1 ? setIsLiked(true) : isLiked(false);
+        res.data.length == 1 ? setIsLiked(true) : setIsLiked(false);
       })
       .catch((err) => {
         console.log(err);
@@ -329,26 +324,30 @@ function Post(props) {
               <div></div>
               <div></div>
             </div>
-            <div className={`options ${optionsClicked ? "active" : ""}`}>
-              <div
-                className="item"
-                onClick={() => {
-                  setPostEditClicked(true);
-                  setOptionsClicked(false);
-                }}
-              >
-                Edit the Post
-              </div>
-              <div
-                className="item"
-                onClick={() => {
-                  setPostDeleteClicked(true);
-                  setOptionsClicked(false);
-                }}
-              >
-                Delete the Post
-              </div>
-            </div>
+            {user_name == post.userID ? (
+                <div className={`options ${optionsClicked ? "active" : ""}`}>
+                  <div
+                    className="item"
+                    onClick={() => {
+                      setPostEditClicked(true);
+                      setOptionsClicked(false);
+                    }}
+                  >
+                    Edit the Post
+                  </div>
+                  <div
+                    className="item"
+                    onClick={() => {
+                      setPostDeleteClicked(true);
+                      setOptionsClicked(false);
+                    }}
+                  >
+                    Delete the Post
+                  </div>
+                </div>
+                ) : (
+                  <></>
+                )}
           </div>
           {!postEditClicked ? (
             <>

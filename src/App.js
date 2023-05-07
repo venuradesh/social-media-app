@@ -18,7 +18,7 @@ function App() {
     lastName: window.localStorage.getItem("lastname") ? window.localStorage.getItem("lastname") : "",
     userid: window.localStorage.getItem("userid") ? window.localStorage.getItem("userid") : "",
   });
-  console.log(window.localStorage.getItem("useremail"))
+  
   return (
     <Container>
       <Router>
