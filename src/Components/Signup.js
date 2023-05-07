@@ -18,7 +18,7 @@ function Signup() {
   const [address, setAddress] = useState("");
   const [confimePassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [allreadyHave, setAllReadyHave] = useState(false);
+  const [allreadyHave, setAllReadyHave] = useState(true);
 
   const onSubmitClick = (e) => {
     e.preventDefault();
@@ -35,7 +35,7 @@ function Signup() {
   };
 
   useEffect(() => {
-    if(allreadyHave){
+    if(!allreadyHave){
       if(password === confimePassword){
         const data = {
           userName: email,

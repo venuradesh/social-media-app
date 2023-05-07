@@ -13,12 +13,12 @@ import Login from "./Components/Login";
 function App() {
   const [user, setUser] = useState({
     email: window.localStorage.getItem("useremail") ? window.localStorage.getItem("useremail") : "",
-    password: "",
+    password: window.localStorage.getItem("password") ? window.localStorage.getItem("useremail") : "",
     firstName: window.localStorage.getItem("firstname") ? window.localStorage.getItem("firstname") : "",
     lastName: window.localStorage.getItem("lastname") ? window.localStorage.getItem("lastname") : "",
     userid: window.localStorage.getItem("userid") ? window.localStorage.getItem("userid") : "",
   });
-
+  console.log(window.localStorage.getItem("useremail"))
   return (
     <Container>
       <Router>

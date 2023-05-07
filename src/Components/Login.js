@@ -24,7 +24,11 @@ function Login({ setUser }) {
             lastName: res.data[0].lName,
             userid: res.data[0].id
           });
-          window.localStorage.setItem("useremail", email);
+          window.localStorage.setItem("useremail", res.data[0].userName);
+          window.localStorage.setItem("password", res.data[0].password);
+          window.localStorage.setItem("firstname", res.data[0].fName);
+          window.localStorage.setItem("lastname", res.data[0].lName);
+          window.localStorage.setItem("userid", res.data[0].id);
           navigate("/");
           console.log(res.data[0].userName);
         }
