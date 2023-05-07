@@ -19,7 +19,7 @@ function Home({ user }) {
     document.getElementById("hotelname").value = "";
     document.getElementById("desc").value = "";
     document.getElementById("fileinput").value = "";
-
+    setFile("");
     const data = {
       userID: userID,
       resturantName: hotelname,
@@ -71,8 +71,8 @@ function Home({ user }) {
       </div>
       <div className="contents">
         <div className="posts-container">
-          {allPost.map((post, index) => (
-            <Post post={post} useId={userID} />
+          {allPost.map((post) => (
+            <Post post={post} useId={userID} file={"testfile.png"}/>
           ))}
         </div>
         <div className="add-post-container">

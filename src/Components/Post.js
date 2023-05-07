@@ -52,14 +52,16 @@ function Post(props) {
   const [postEditClicked, setPostEditClicked] = useState(false);
   const [desc, setDesc] = useState("");
   const [hotelName, setHotelName] = useState("");
-  const [file, setFile] = useState(props.post.image);
+  const [file, setFile] = useState(props.file);
   const [postDeleteClicked, setPostDeleteClicked] = useState(false);
   const [image, setImage] = useState("");
-
+  
   const post = props.post;
   const postID = post.id;
   const user_name = props.useId;
   const resturantName = post.resturantName;
+  
+  
   const addComment = () => {
     const data = {
       user_name: user_name,
@@ -112,11 +114,12 @@ function Post(props) {
   };
 
   const onDeletePostClick = (id) => {
-
+    console.log(id);
     axios
       .delete(`http://localhost:8080/deletePost/${id}`)
       .then((response) => {
         setPostEditClicked(false);
+        setPostDeleteClicked(false);
       })
       .catch((error) => {
         console.error(error);
@@ -135,7 +138,6 @@ function Post(props) {
       })
       .then((res) => {
         setComments([]);
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -226,15 +228,30 @@ function Post(props) {
 
   useEffect(() => {
     // localStorage.setItem("comments", JSON.stringify(allComments));
+    console.log("change");
     axios
       .get(`http://localhost:8080/getLikes/${postID}`)
       .then((res) => {
+        console.log(res.data);
         setLikesCount(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [likesCount]);
+
+  useEffect(() => {
+    // localStorage.setItem("comments", JSON.stringify(allComments));
+    console.log("change");
+    axios
+      .get(`http://localhost:8080/getUserLike/${postID}/${user_name}`)
+      .then((res) => {
+        res.data.length == 1 ? setIsLiked(true) : isLiked(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const onRateClick = () => {
     setRateClicked(true);
@@ -260,9 +277,10 @@ function Post(props) {
         },
       })
       .then((res) => {
+        console.log("like add");
+        setIsLiked(true)
+        setLikesCount(likesCount+1);
         
-        setIsLiked(true);
-        setLikesCount(0);
       })
       .catch((err) => {
         console.log(err);
@@ -273,7 +291,7 @@ function Post(props) {
     axios
       .delete(`http://localhost:8080/removeLike/${user_id}/${post_id}`)
       .then((response) => {
-
+        console.log("like remove");
         setIsLiked(false)
         setLikesCount(0);
       })
