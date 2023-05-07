@@ -79,7 +79,7 @@ function Home({ user }) {
         <div className="add-post-container">
           <div className="heading">Add a Post</div>
           <div className="form">
-            <InputField content="Restaurant Name" id="hotelname" type="text" onChange={setHotelname} />
+            <InputField type="text" content={"Restaurant Name"} id="hotelname" onChange={setHotelname} />
             <InputField content="Description" id="desc" type="text" onChange={setDesc} />
             <div className="btn-container">
               <input type="file" name="fileinput" id="fileinput" onChange={convertBase64} />
@@ -143,6 +143,10 @@ const Container = styled.div`
       box-shadow: 0 2px 5px 0px lightgray;
       padding: 20px 30px;
       z-index: 10;
+
+      .form{
+        position:relative;
+      }
 
       .heading {
         font-size: 1.4rem;

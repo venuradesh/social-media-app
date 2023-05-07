@@ -15,20 +15,23 @@ import ProfilePic from "../assets/profile.png";
 
 function Profile({ user }) {
   const [allPost, setAllPost] = useState([]);
-  const [userDetailsfromAPI, setUserDetailsfromAPI] = useState({
-    firstName: "",
-    lastName: "",
-    address: "",
-    dob: "",
-    email: "venurawarnasooriya@gmail.com",
-  });
+  const [userDetailsfromAPI, setUserDetailsfromAPI] = useState({});
 
   useEffect(() => {
     axios
       .get(`http://localhost:8080/getSingleUserPosts/${user.email}`)
       .then((res) => {
-        console.log(res.data);
+        
         setAllPost([...res.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axios
+      .get(`http://localhost:8080/getUser/${user.email}`)
+      .then((res) => {
+        setUserDetailsfromAPI(res.data[0])
       })
       .catch((err) => {
         console.log(err);

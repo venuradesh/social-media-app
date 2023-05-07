@@ -25,7 +25,7 @@ function Signup() {
     axios
       .get(`http://localhost:8080/getUser/${email}`)
       .then((res) => {
-        res.data.length? setAllReadyHave(true) : setAllReadyHave(false);
+        res.data.length > 0 ? setAllReadyHave(true) : setAllReadyHave(false);
       })
       .catch((err) => {
         console.log(err);
@@ -35,8 +35,8 @@ function Signup() {
   };
 
   useEffect(() => {
-    if(!allreadyHave){
-      if(password == confimePassword){
+    if(allreadyHave){
+      if(password === confimePassword){
         const data = {
           userName: email,
           password: password,

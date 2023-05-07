@@ -54,6 +54,7 @@ function Post(props) {
   const [hotelName, setHotelName] = useState("");
   const [file, setFile] = useState(props.post.image);
   const [postDeleteClicked, setPostDeleteClicked] = useState(false);
+  const [image, setImage] = useState("");
 
   const post = props.post;
   const postID = post.id;
@@ -111,10 +112,11 @@ function Post(props) {
   };
 
   const onDeletePostClick = (id) => {
+
     axios
       .delete(`http://localhost:8080/deletePost/${id}`)
       .then((response) => {
-        console.log(response);
+        setPostEditClicked(false);
       })
       .catch((error) => {
         console.error(error);
@@ -124,11 +126,12 @@ function Post(props) {
   const onUpdatePostClick = () => {
     axios
       .put("http://localhost:8080/editPost", {
-        id: commentId,
-        user_name: user_name,
-        message: newComment,
+        id: postID,
+        userID: user_name,
+        resturantName: hotelName,
         time: Date.now(),
-        postID: postID,
+        description: desc,
+        image:image
       })
       .then((res) => {
         setComments([]);
@@ -226,7 +229,6 @@ function Post(props) {
     axios
       .get(`http://localhost:8080/getLikes/${postID}`)
       .then((res) => {
-        console.log(res.data);
         setLikesCount(res.data);
       })
       .catch((err) => {
@@ -258,7 +260,7 @@ function Post(props) {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        
         setIsLiked(true);
         setLikesCount(0);
       })
@@ -271,13 +273,25 @@ function Post(props) {
     axios
       .delete(`http://localhost:8080/removeLike/${user_id}/${post_id}`)
       .then((response) => {
-        console.log(response.data);
-        setIsLiked(false);
+
+        setIsLiked(false)
         setLikesCount(0);
       })
       .catch((error) => {
         console.error(error);
       });
+  };
+
+  const convertBase64 = (e) => {
+    setFile(e.target.files[0]);
+    var reader = new FileReader();
+    reader.readAsDataURL(e.target.files[0]);
+    reader.onload = () => {
+      setImage(reader.result);
+    };
+    reader.onerror = (error) => {
+      console.log("Error : ", error);
+    };
   };
 
   return (
@@ -611,7 +625,7 @@ function Post(props) {
               <InputField type="text" content={"Restaurant Name"} value={post.resturantName} id="hotelname" onChange={setHotelName} />
               <InputField type="text" content={"Description"} value={post.description} id="desc" onChange={setDesc} />
               <div className="btn-container">
-                <input type="file" name="fileinput" id="fileinput" onChange={(e) => setFile(e.target.files[0])} />
+                <input type="file" name="fileinput" id="fileinput" onChange={(e) => convertBase64(e)} />
                 <div className="btn photo" onClick={() => document.getElementById("fileinput").click()}>
                   Add a photo
                 </div>
