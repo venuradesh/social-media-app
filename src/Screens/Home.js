@@ -7,7 +7,6 @@ import Header from "../Components/Header";
 import InputField from "../Components/InputField";
 import axios from "axios";
 
-
 function Home({ user }) {
   const [hotelname, setHotelname] = useState("");
   const [desc, setDesc] = useState("");
@@ -15,7 +14,7 @@ function Home({ user }) {
   const [file, setFile] = useState(null);
   const [userID, setUserID] = useState(user.email);
   const [allPost, setAllPost] = useState([]);
-  
+
   const onSubmitClick = () => {
     document.getElementById("hotelname").value = "";
     document.getElementById("desc").value = "";
@@ -144,8 +143,9 @@ const Container = styled.div`
       padding: 20px 30px;
       z-index: 10;
 
-      .form{
-        position:relative;
+      .form {
+        z-index: 0;
+        position: relative;
       }
 
       .heading {
