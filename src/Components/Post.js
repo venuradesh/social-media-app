@@ -217,7 +217,6 @@ function Post(props) {
     axios
       .get(`http://localhost:8080/getLikes/${postID}`)
       .then((res) => {
-        console.log(res.data);
         setLikesCount(res.data);
       })
       .catch((err) => {
@@ -250,7 +249,7 @@ function Post(props) {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        
         setIsLiked(true);
         setLikesCount(0);
       })
@@ -263,7 +262,7 @@ function Post(props) {
     axios
       .delete(`http://localhost:8080/removeLike/${user_id}/${post_id}`)
       .then((response) => {
-        console.log(response.data);
+        
         setIsLiked(false)
         setLikesCount(0);
       })
