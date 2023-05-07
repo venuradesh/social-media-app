@@ -61,7 +61,6 @@ function Post(props) {
   const user_name = props.useId;
   const resturantName = post.resturantName;
   
-  
   const addComment = () => {
     const data = {
       user_name: user_name,
@@ -238,9 +237,11 @@ function Post(props) {
   }, [likesCount]);
 
   useEffect(() => {
+    console.log(props.useId);
     axios
       .get(`http://localhost:8080/getUserLike/${postID}/${user_name}`)
       .then((res) => {
+        console.log(res.data);
         res.data.length == 1 ? setIsLiked(true) : setIsLiked(false);
       })
       .catch((err) => {
@@ -264,7 +265,7 @@ function Post(props) {
       userId: user_name,
       postId: postID,
     };
-
+    console.log(data);
     axios
       .post(`http://localhost:8080/addLike`, data, {
         headers: {
@@ -272,7 +273,6 @@ function Post(props) {
         },
       })
       .then((res) => {
-        console.log("like add");
         setIsLiked(true)
         setLikesCount(likesCount+1);
         
@@ -286,7 +286,6 @@ function Post(props) {
     axios
       .delete(`http://localhost:8080/removeLike/${user_id}/${post_id}`)
       .then((response) => {
-        console.log("like remove");
         setIsLiked(false)
         setLikesCount(0);
       })

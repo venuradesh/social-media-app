@@ -6,13 +6,20 @@ import { Link, useNavigate } from "react-router-dom";
 import Profile from "../assets/profile.png";
 import Logout from "../assets/logout.png";
 
-function Header({ user }) {
+function Header({ user,setUser }) {
   const navigate = useNavigate();
   const [profileClicked, setProfileClicked] = useState(false);
 
   const onLogoutClick = () => {
-    window.localStorage.removeItem("useremail");
-    navigate("/login");
+    localStorage.clear();
+    setUser({
+      email: null,
+      password: null,
+      firstName: null,
+      lastName: null,
+      userid: null,
+    });
+    navigate("/");
   };
 
   return (
