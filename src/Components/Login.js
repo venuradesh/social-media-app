@@ -71,6 +71,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 0;
 
   .container {
     width: 400px;
@@ -96,6 +97,8 @@ const Form = styled.form`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  position: relative;
+  z-index: 0;
 
   .btn-container {
     display: flex;

@@ -18,6 +18,10 @@ import Right from "../assets/right.png";
 
 //comment data
 
+//components
+import InputField from "./InputField";
+
+const userid = "ahfbx";
 
 function Post(props) {
   const [optionsClicked, setOptionsClicked] = useState(false);
@@ -45,6 +49,11 @@ function Post(props) {
   const [edittedReview, setEdittedReview] = useState("");
   const [defaultReview, setDefaultReview] = useState("");
   const [editRatingValue, setEditRatingValue] = useState(0);
+  const [postEditClicked, setPostEditClicked] = useState(false);
+  const [desc, setDesc] = useState("");
+  const [hotelName, setHotelName] = useState("");
+  const [file, setFile] = useState(props.post.image);
+  const [postDeleteClicked, setPostDeleteClicked] = useState(false);
 
   const post = props.post;
   const postID = post.id;
@@ -235,13 +244,12 @@ function Post(props) {
     setOverallRate(x);
   };
 
-
   const addLike = () => {
     const data = {
       userId: user_name,
       postId: postID,
     };
-    
+
     axios
       .post(`http://localhost:8080/addLike`, data, {
         headers: {
@@ -258,11 +266,11 @@ function Post(props) {
       });
   };
 
-  const removeLike = (user_id,post_id) => {
+  const removeLike = (user_id, post_id) => {
     axios
       .delete(`http://localhost:8080/removeLike/${user_id}/${post_id}`)
       .then((response) => {
-        
+        console.log(response.data);
         setIsLiked(false)
         setLikesCount(0);
       })
@@ -273,307 +281,372 @@ function Post(props) {
 
   return (
     <Container>
-      <div className="profile-container">
-        <div className="name-container" onClick={() => setOptionsClicked(false)}>
-          <div className="profile-image"></div>
-          <div className="profile-name">
-            <div className="name">{post.userID}</div>
-            <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
-          </div>
-        </div>
-        <div className="more-options" onClick={() => (optionsClicked ? setOptionsClicked(false) : setOptionsClicked(true))}>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <div className={`options ${optionsClicked ? "active" : ""}`}>
-          <div className="item">Edit the Post</div>
-          <div className="item">Delete the Post</div>
-        </div>
-      </div>
-      <Description>
-        <div className="res-name">
-          <div className="res">
-            <span>Resturant Name:</span> {post.resturantName}
-          </div>
-          <div className="btn" onClick={() => onRateClick()}>
-            <img src={Star} alt="star" /> Rate
-          </div>
-        </div>
-        <div className="desc-food">{post.description}</div>
-      </Description>
-      <PostContainer source={post.image}></PostContainer>
-      <div className="like-count">
-        <div className="like">
-          <img src={Like} alt="like" />
-          {likesCount}
-        </div>
-        <div className="comment">
-          <img src={Comment} alt="comment" />
-          {comments.length}
-        </div>
-      </div>
-      <div className="like-comment-section">
-        <div className={`btn ${isLiked ? "active" : ""}`} onClick={() => (isLiked ? removeLike(user_name,postID) : addLike())}>
-          <img src={Like} alt="like" /> Like
-        </div>
-        <div className="btn" onClick={() => (newCommentClicked ? setNewCommentClicked(false) : setNewCommentClicked(true))}>
-          <img src={Comment} alt="comment" />
-          Comment
-        </div>
-      </div>
-      <CommentSection>
-        {newCommentClicked ? (
-          <NewComment>
-            <div className="profile">
-              <img src={ProfilePic} alt="profile" />
+      {!postDeleteClicked ? (
+        <>
+          <div className="profile-container">
+            <div className="name-container" onClick={() => setOptionsClicked(false)}>
+              <div className="profile-image"></div>
+              <div className="profile-name">
+                <div className="name">{post.userID}</div>
+                <div className="time">{moment(parseInt(post.time)).fromNow()}</div>
+              </div>
             </div>
-            <input type="text" placeholder="Enter your comment" id="comment" onChange={(e) => setNewComment(e.target.value)} />
-            <div
-              className="btn"
-              onClick={() => {
-                addComment();
-                document.getElementById("comment").value = "";
-              }}
-            >
-              <img src={Send} alt="send" />
+            <div className="more-options" onClick={() => (optionsClicked ? setOptionsClicked(false) : setOptionsClicked(true))}>
+              <div></div>
+              <div></div>
+              <div></div>
             </div>
-          </NewComment>
-        ) : (
-          <></>
-        )}
-        {!editClicked ? (
-          <>
-            {comments.map((comment, index) => (
-              <>
-                {index < allComments ? (
-                  <div className="comment">
-                    <div className="profile">
-                      <div className="dp">
-                        <img src={ProfilePic} alt="profile" />
-                      </div>
-                      <div className="container">
-                        <div className="name">
-                          {comment.user_name}
-                          <div className="time">{moment(parseInt(comment.time)).fromNow()}</div>
-                        </div>
-                        <div className="comment">{comment.message}</div>
-                      </div>
-                      {user_name == comment.user_name || user_name == post.userID ? (
-                        <div className={`edit-delete-section ${commentDeleteClicked ? "noHover" : ""}`}>
-                          {user_name == comment.user_name ? (
-                            <div
-                              className="edit"
-                              onClick={() => {
-                                setDefaultMessage({ message: comment.message, commentId: comment.id });
-                                setCommentId(comment.id);
-                                !commentDeleteClicked ? setEditClicked(true) : <></>;
-                              }}
-                            >
-                              {commentDeleteClicked ? <img src={Right} alt="ok" /> : <img src={Edit} alt="edit" />}
-                            </div>
-                          ) : (
-                            <></>
-                          )}
-
-                          <div
-                            className="delete"
-                            onClick={() => {
-                              onDeleteCommentClick(comment.id);
-                              commentDeleteClicked ? setCommentDeleteClicked(false) : <></>;
-                            }}
-                          >
-                            {commentDeleteClicked ? (
-                              <img src={Close} alt="no" />
-                            ) : (
-                              <img
-                                src={Delete}
-                                alt="delete"
-                                onClick={() => {
-                                  setCommentDeleteClicked(true);
-                                }}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                    </div>
+            <div className={`options ${optionsClicked ? "active" : ""}`}>
+              <div
+                className="item"
+                onClick={() => {
+                  setPostEditClicked(true);
+                  setOptionsClicked(false);
+                }}
+              >
+                Edit the Post
+              </div>
+              <div
+                className="item"
+                onClick={() => {
+                  setPostDeleteClicked(true);
+                  setOptionsClicked(false);
+                }}
+              >
+                Delete the Post
+              </div>
+            </div>
+          </div>
+          {!postEditClicked ? (
+            <>
+              <Description>
+                <div className="res-name">
+                  <div className="res">
+                    <span>Resturant Name:</span> {post.resturantName}
                   </div>
+                  <div className="btn" onClick={() => onRateClick()}>
+                    <img src={Star} alt="star" /> Rate
+                  </div>
+                </div>
+                <div className="desc-food">{post.description}</div>
+              </Description>
+              <PostContainer source={post.image}></PostContainer>
+              <div className="like-count">
+                <div className="like">
+                  <img src={Like} alt="like" />
+                  {likesCount}
+                </div>
+                <div className="comment">
+                  <img src={Comment} alt="comment" />
+                  {comments.length}
+                </div>
+              </div>
+              <div className="like-comment-section">
+                <div className={`btn ${isLiked ? "active" : ""}`} onClick={() => (isLiked ? removeLike(user_name, postID) : addLike())}>
+                  <img src={Like} alt="like" /> Like
+                </div>
+                <div className="btn" onClick={() => (newCommentClicked ? setNewCommentClicked(false) : setNewCommentClicked(true))}>
+                  <img src={Comment} alt="comment" />
+                  Comment
+                </div>
+              </div>
+              <CommentSection>
+                {newCommentClicked ? (
+                  <NewComment>
+                    <div className="profile">
+                      <img src={ProfilePic} alt="profile" />
+                    </div>
+                    <input type="text" placeholder="Enter your comment" id="comment" onChange={(e) => setNewComment(e.target.value)} />
+                    <div
+                      className="btn"
+                      onClick={() => {
+                        addComment();
+                        document.getElementById("comment").value = "";
+                      }}
+                    >
+                      <img src={Send} alt="send" />
+                    </div>
+                  </NewComment>
                 ) : (
                   <></>
                 )}
-              </>
-            ))}
-            {comments.length > 2 ? (
-              <>
-                {allComments == 2 ? (
-                  <div className="see-more" onClick={() => setAllComments(comments.length)}>
-                    See more comments
-                  </div>
-                ) : (
-                  <div className="see-more" onClick={() => setAllComments(2)}>
-                    See less comments
-                  </div>
-                )}
-              </>
-            ) : (
-              <></>
-            )}
-          </>
-        ) : (
-          <>
-            <div className="edit-section">
-              <input type="text" id="edit" defaultValue={defaultMessage.message} onChange={(e) => setEditedComment(e.target.value)} />
-              <div className="btn-container">
-                <div
-                  className="save btn"
-                  onClick={() => {
-                    editedComment ? onUpdateCommentClick() : <></>;
-                    editedComment ? (document.getElementById("edit").value = "") : <></>;
-                    setEditClicked(false);
-                  }}
-                >
-                  <img src={Right} alt="correct" />
-                </div>
-                <div
-                  className="btn cancel"
-                  onClick={() => {
-                    document.getElementById("edit").value = "";
-                    setEditClicked(false);
-                  }}
-                >
-                  <img src={Close} alt="close" />
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </CommentSection>
-      {rateClicked ? (
-        <Ratings ratings="4.5">
-          <div className="container">
-            <div className="close" onClick={() => setRateClicked(false)}>
-              <img src={Close} alt="close" />
-            </div>
-            <div className="heading">
-              Reviews and Ratings
-              <span>{resturantName}</span>
-            </div>
-            <div className="star-collection">
-              <Rating name="read-only" value={overallRate} precision={0.5} readOnly size="large" />
-            </div>
-            <div className="btn-container">
-              {addReviewClicked ? (
-                <div className="addreview-container">
-                  <input type="text" name="new-review" onChange={(e) => setNewReview(e.target.value)} id="new-reivew" className="add-review" placeholder="Enter the New Review" />
-                  <Rating
-                    name="simple-controlled"
-                    onChange={(event, newValue) => {
-                      setNewRatingValue(newValue);
-                    }}
-                  />
-                  <div className="btn-container">
-                    <div
-                      className="send btn"
-                      onClick={() => {
-                        if (newReview) {
-                          addRating();
-                        }
-                      }}
-                    >
-                      Submit
-                    </div>
-                    <div className="cancel btn" onClick={() => setAddReviewClicked(false)}>
-                      Cancel
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {!userAddedTheReview ? (
-                    <div className="add-review btn" onClick={() => setAddReviewClicked(true)}>
-                      Add Review
-                    </div>
-                  ) : (
-                    <></>
-                  )}
-                </>
-              )}
-            </div>
-            {showReviewsClicked ? (
-              <>
-                {!editReviewClicked ? (
-                  <div className="reviews-container">
-                    {allRatings.map((review) => (
-                      <div className="review">
-                        <div className="profile">{review.userID}</div>
-                        <div className="comment">{review.message}</div>
-                        <div className="rating">
-                          <Rating name="read-only" value={review.rate} readOnly size="large" />
-                        </div>
-                        {user_name == review.userID ? (
-                          <div className="edit-section">
-                            <div
-                              className="edit btn"
-                              onClick={() => {
-                                setRateId(review.id);
-                                setEditReviewClicked(true);
-                                setDefaultReview(review.message);
-                                setEditRatingValue(review.rate);
-                              }}
-                            >
-                              <img src={Edit} alt="edit" />
-                            </div>
-                            <div className="delete btn" onClick={() => onDeleteRateClick(review.id)}>
-                              <img src={Delete} alt="delete" />
+                {!editClicked ? (
+                  <>
+                    {comments.map((comment, index) => (
+                      <>
+                        {index < allComments ? (
+                          <div className="comment">
+                            <div className="profile">
+                              <div className="dp">
+                                <img src={ProfilePic} alt="profile" />
+                              </div>
+                              <div className="container">
+                                <div className="name">
+                                  {comment.user_name}
+                                  <div className="time">{moment(parseInt(comment.time)).fromNow()}</div>
+                                </div>
+                                <div className="comment">{comment.message}</div>
+                              </div>
+                              {user_name == comment.user_name || user_name == post.userID ? (
+                                <div className={`edit-delete-section ${commentDeleteClicked ? "noHover" : ""}`}>
+                                  {user_name == comment.user_name ? (
+                                    <div
+                                      className="edit"
+                                      onClick={() => {
+                                        setDefaultMessage({ message: comment.message, commentId: comment.id });
+                                        setCommentId(comment.id);
+                                        !commentDeleteClicked ? setEditClicked(true) : <></>;
+                                      }}
+                                    >
+                                      {commentDeleteClicked ? <img src={Right} alt="ok" /> : <img src={Edit} alt="edit" />}
+                                    </div>
+                                  ) : (
+                                    <></>
+                                  )}
+
+                                  <div
+                                    className="delete"
+                                    onClick={() => {
+                                      onDeleteCommentClick(comment.id);
+                                      commentDeleteClicked ? setCommentDeleteClicked(false) : <></>;
+                                    }}
+                                  >
+                                    {commentDeleteClicked ? (
+                                      <img src={Close} alt="no" />
+                                    ) : (
+                                      <img
+                                        src={Delete}
+                                        alt="delete"
+                                        onClick={() => {
+                                          setCommentDeleteClicked(true);
+                                        }}
+                                      />
+                                    )}
+                                  </div>
+                                </div>
+                              ) : (
+                                <></>
+                              )}
                             </div>
                           </div>
                         ) : (
                           <></>
                         )}
-                      </div>
+                      </>
                     ))}
-                  </div>
+                    {comments.length > 2 ? (
+                      <>
+                        {allComments == 2 ? (
+                          <div className="see-more" onClick={() => setAllComments(comments.length)}>
+                            See more comments
+                          </div>
+                        ) : (
+                          <div className="see-more" onClick={() => setAllComments(2)}>
+                            See less comments
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </>
                 ) : (
-                  <div className="edit-review">
-                    <input type="text" name="edit-review" onChange={(e) => setEdittedReview(e.target.value)} defaultValue={defaultReview} id="new-reivew" className="add-review" placeholder="Enter the New Review" />
-                    <Rating
-                      name="simple-controlled"
-                      onChange={(event, newValue) => {
-                        setEditRatingValue(newValue);
-                      }}
-                      value={editRatingValue}
-                    />
-                    <div className="btn-container">
-                      <div
-                        className="send btn"
-                        onClick={() => {
-                          if (edittedReview) {
-                            onUpdateRateClick();
-                          }
-                        }}
-                      >
-                        Save
-                      </div>
-                      <div className="cancel btn" onClick={() => setEditReviewClicked(false)}>
-                        Cancel
+                  <>
+                    <div className="edit-section">
+                      <input type="text" id="edit" defaultValue={defaultMessage.message} onChange={(e) => setEditedComment(e.target.value)} />
+                      <div className="btn-container">
+                        <div
+                          className="save btn"
+                          onClick={() => {
+                            editedComment ? onUpdateCommentClick() : <></>;
+                            editedComment ? (document.getElementById("edit").value = "") : <></>;
+                            setEditClicked(false);
+                          }}
+                        >
+                          <img src={Right} alt="correct" />
+                        </div>
+                        <div
+                          className="btn cancel"
+                          onClick={() => {
+                            document.getElementById("edit").value = "";
+                            setEditClicked(false);
+                          }}
+                        >
+                          <img src={Close} alt="close" />
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </>
                 )}
-              </>
-            ) : (
-              <></>
-            )}
-            <div className="show-reviews" onClick={() => (showReviewsClicked ? setShowReviewsClicked(false) : setShowReviewsClicked(true))}>
-              {showReviewsClicked ? "Hide Reviews" : "Show Reviews"}
+              </CommentSection>
+              {rateClicked ? (
+                <Ratings ratings="4.5">
+                  <div className="container">
+                    <div className="close" onClick={() => setRateClicked(false)}>
+                      <img src={Close} alt="close" />
+                    </div>
+                    <div className="heading">
+                      Reviews and Ratings
+                      <span>{resturantName}</span>
+                    </div>
+                    <div className="star-collection">
+                      <Rating name="read-only" value={overallRate} precision={0.5} readOnly size="large" />
+                    </div>
+                    <div className="btn-container">
+                      {addReviewClicked ? (
+                        <div className="addreview-container">
+                          <input type="text" name="new-review" onChange={(e) => setNewReview(e.target.value)} id="new-reivew" className="add-review" placeholder="Enter the New Review" />
+                          <Rating
+                            name="simple-controlled"
+                            onChange={(event, newValue) => {
+                              setNewRatingValue(newValue);
+                            }}
+                          />
+                          <div className="btn-container">
+                            <div
+                              className="send btn"
+                              onClick={() => {
+                                if (newReview) {
+                                  addRating();
+                                }
+                              }}
+                            >
+                              Submit
+                            </div>
+                            <div className="cancel btn" onClick={() => setAddReviewClicked(false)}>
+                              Cancel
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {!userAddedTheReview ? (
+                            <div className="add-review btn" onClick={() => setAddReviewClicked(true)}>
+                              Add Review
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                        </>
+                      )}
+                    </div>
+                    {showReviewsClicked ? (
+                      <>
+                        {!editReviewClicked ? (
+                          <div className="reviews-container">
+                            {allRatings.map((review) => (
+                              <div className="review">
+                                <div className="profile">{review.userID}</div>
+                                <div className="comment">{review.message}</div>
+                                <div className="rating">
+                                  <Rating name="read-only" value={review.rate} readOnly size="large" />
+                                </div>
+                                {user_name == review.userID ? (
+                                  <div className="edit-section">
+                                    <div
+                                      className="edit btn"
+                                      onClick={() => {
+                                        setRateId(review.id);
+                                        setEditReviewClicked(true);
+                                        setDefaultReview(review.message);
+                                        setEditRatingValue(review.rate);
+                                      }}
+                                    >
+                                      <img src={Edit} alt="edit" />
+                                    </div>
+                                    <div className="delete btn" onClick={() => onDeleteRateClick(review.id)}>
+                                      <img src={Delete} alt="delete" />
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <></>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="edit-review">
+                            <input type="text" name="edit-review" onChange={(e) => setEdittedReview(e.target.value)} defaultValue={defaultReview} id="new-reivew" className="add-review" placeholder="Enter the New Review" />
+                            <Rating
+                              name="simple-controlled"
+                              onChange={(event, newValue) => {
+                                setEditRatingValue(newValue);
+                              }}
+                              value={editRatingValue}
+                            />
+                            <div className="btn-container">
+                              <div
+                                className="send btn"
+                                onClick={() => {
+                                  if (edittedReview) {
+                                    onUpdateRateClick();
+                                  }
+                                }}
+                              >
+                                Save
+                              </div>
+                              <div className="cancel btn" onClick={() => setEditReviewClicked(false)}>
+                                Cancel
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                    <div className="show-reviews" onClick={() => (showReviewsClicked ? setShowReviewsClicked(false) : setShowReviewsClicked(true))}>
+                      {showReviewsClicked ? "Hide Reviews" : "Show Reviews"}
+                    </div>
+                  </div>
+                </Ratings>
+              ) : (
+                <></>
+              )}
+            </>
+          ) : (
+            <PostEdit>
+              <div className="heading">Edit the Post</div>
+              <InputField type="text" content={"Restaurant Name"} value={post.resturantName} id="hotelname" onChange={setHotelName} />
+              <InputField type="text" content={"Description"} value={post.description} id="desc" onChange={setDesc} />
+              <div className="btn-container">
+                <input type="file" name="fileinput" id="fileinput" onChange={(e) => setFile(e.target.files[0])} />
+                <div className="btn photo" onClick={() => document.getElementById("fileinput").click()}>
+                  Add a photo
+                </div>
+                <div className="file-selected">{file ? file.name : "no files selected"}</div>
+              </div>
+              <div className="btn-container">
+                <div
+                  className="save btn"
+                  onClick={() => {
+                    if (hotelName || desc) {
+                      onUpdatePostClick();
+                      setPostEditClicked(false);
+                    }
+                  }}
+                >
+                  Save
+                </div>
+                <div className="cancel btn" onClick={() => setPostEditClicked(false)}>
+                  Cancel
+                </div>
+              </div>
+            </PostEdit>
+          )}
+        </>
+      ) : (
+        <PostDelete>
+          <div className="heading">Do you want to delete this post?</div>
+          <div className="btn-container">
+            <div className="yes btn" onClick={() => onDeletePostClick(post.id)}>
+              Yes
+            </div>
+            <div className="no btn" onClick={() => setPostDeleteClicked(false)}>
+              No
             </div>
           </div>
-        </Ratings>
-      ) : (
-        <></>
+        </PostDelete>
       )}
     </Container>
   );
@@ -590,6 +663,7 @@ const Container = styled.div`
   overflow: hidden;
   box-shadow: 0 2px 5px 0px lightgray;
   position: relative;
+  z-index: 0;
 
   .profile-container {
     padding-inline: 20px;
@@ -608,6 +682,7 @@ const Container = styled.div`
       transform-origin: top;
       transform: scaleY(0);
       transition: all 0.3s ease;
+      z-index: 10;
 
       &.active {
         transform: scaleY(1);
@@ -1172,6 +1247,118 @@ const Ratings = styled.div`
           .edit-section {
             right: 0;
           }
+        }
+      }
+    }
+  }
+`;
+
+const PostEdit = styled.div`
+  z-index: -2;
+  position: relative;
+  padding: 20px;
+
+  .heading {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--text-heading-color);
+  }
+
+  .btn-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+
+    .file-selected {
+      font-size: 0.8rem;
+    }
+
+    input {
+      display: none;
+    }
+
+    .btn {
+      width: 100%;
+      height: 50px;
+      background-color: var(--btn-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--background-color);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-weight: var(--font-w-600);
+
+      &.cancel {
+        background-color: var(--btn-danger);
+
+        &:hover {
+          background-color: var(--btn-danger-alt);
+        }
+      }
+
+      &.photo {
+        width: 50%;
+        background-color: var(--background-color);
+        color: var(--text-heading-color);
+        margin-top: 20px;
+        margin-bottom: 20px;
+
+        &:hover {
+          background-color: lightgray;
+        }
+      }
+
+      &:hover {
+        background-color: var(--btn-color-alt);
+      }
+    }
+  }
+`;
+
+const PostDelete = styled.div`
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+
+  .heading {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-heading-color);
+  }
+
+  .btn-container {
+    margin-top: 20px;
+    padding-inline: 50px;
+    display: flex;
+    column-gap: 20px;
+    width: 100%;
+
+    .btn {
+      flex: 1;
+      width: 100%;
+      height: 50px;
+      background-color: var(--btn-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--btn-color-alt);
+      }
+
+      &.no {
+        background-color: var(--btn-danger);
+
+        &:hover {
+          background-color: var(--btn-danger-alt);
         }
       }
     }
