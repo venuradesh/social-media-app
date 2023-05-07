@@ -64,7 +64,7 @@ function Login({ setUser }) {
             <button type="submit" className="btn submit" onClick={(e) => onSubmitClick(e)}>
               Login
             </button>
-            <button type="reset" className="btn clear" onClick={}>
+            <button type="reset" className="btn clear" >
               Clear
             </button>
           </div>
