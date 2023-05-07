@@ -14,8 +14,8 @@ function Login({ setUser }) {
   const onSubmitClick = (e) => {
     e.preventDefault();
 
-    setUser({ email: "venura@gmail.com", password: "123", firstName: "Venura", lastName: "Warnasooriya", userid: "abv" });
-    window.localStorage.setItem("useremail", "email@gmail.com");
+    // setUser({ email: "venura@gmail.com", password: "123", firstName: "Venura", lastName: "Warnasooriya", userid: "abv" });
+    // window.localStorage.setItem("useremail", "email@gmail.com");
     navigate("/");
 
     axios
@@ -35,7 +35,6 @@ function Login({ setUser }) {
           window.localStorage.setItem("lastname", res.data[0].lName);
           window.localStorage.setItem("userid", res.data[0].id);
           navigate("/");
-          console.log(res.data[0].userName);
         } else {
           console.log("password dosen't match");
         }

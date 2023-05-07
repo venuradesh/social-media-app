@@ -7,7 +7,7 @@ import Header from "../Components/Header";
 import InputField from "../Components/InputField";
 import axios from "axios";
 
-function Home({ user }) {
+function Home({ user,setUser }) {
   const [hotelname, setHotelname] = useState("");
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState("");
@@ -67,7 +67,7 @@ function Home({ user }) {
   return (
     <Container>
       <div className="header">
-        <Header user={user} />
+        <Header user={user} setUser={setUser}/>
       </div>
       <div className="contents">
         <div className="posts-container">

@@ -61,7 +61,6 @@ function Post(props) {
   const user_name = props.useId;
   const resturantName = post.resturantName;
   
-  
   const addComment = () => {
     const data = {
       user_name: user_name,
@@ -227,12 +226,9 @@ function Post(props) {
   }, [allRatings]);
 
   useEffect(() => {
-    // localStorage.setItem("comments", JSON.stringify(allComments));
-    console.log("change");
     axios
       .get(`http://localhost:8080/getLikes/${postID}`)
       .then((res) => {
-        console.log(res.data);
         setLikesCount(res.data);
       })
       .catch((err) => {
@@ -241,12 +237,12 @@ function Post(props) {
   }, [likesCount]);
 
   useEffect(() => {
-    // localStorage.setItem("comments", JSON.stringify(allComments));
-    console.log("change");
+    console.log(props.useId);
     axios
       .get(`http://localhost:8080/getUserLike/${postID}/${user_name}`)
       .then((res) => {
-        res.data.length == 1 ? setIsLiked(true) : isLiked(false);
+        console.log(res.data);
+        res.data.length == 1 ? setIsLiked(true) : setIsLiked(false);
       })
       .catch((err) => {
         console.log(err);
@@ -269,7 +265,7 @@ function Post(props) {
       userId: user_name,
       postId: postID,
     };
-
+    console.log(data);
     axios
       .post(`http://localhost:8080/addLike`, data, {
         headers: {
@@ -277,7 +273,6 @@ function Post(props) {
         },
       })
       .then((res) => {
-        console.log("like add");
         setIsLiked(true)
         setLikesCount(likesCount+1);
         
@@ -291,7 +286,6 @@ function Post(props) {
     axios
       .delete(`http://localhost:8080/removeLike/${user_id}/${post_id}`)
       .then((response) => {
-        console.log("like remove");
         setIsLiked(false)
         setLikesCount(0);
       })
@@ -329,26 +323,30 @@ function Post(props) {
               <div></div>
               <div></div>
             </div>
-            <div className={`options ${optionsClicked ? "active" : ""}`}>
-              <div
-                className="item"
-                onClick={() => {
-                  setPostEditClicked(true);
-                  setOptionsClicked(false);
-                }}
-              >
-                Edit the Post
-              </div>
-              <div
-                className="item"
-                onClick={() => {
-                  setPostDeleteClicked(true);
-                  setOptionsClicked(false);
-                }}
-              >
-                Delete the Post
-              </div>
-            </div>
+            {user_name == post.userID ? (
+                <div className={`options ${optionsClicked ? "active" : ""}`}>
+                  <div
+                    className="item"
+                    onClick={() => {
+                      setPostEditClicked(true);
+                      setOptionsClicked(false);
+                    }}
+                  >
+                    Edit the Post
+                  </div>
+                  <div
+                    className="item"
+                    onClick={() => {
+                      setPostDeleteClicked(true);
+                      setOptionsClicked(false);
+                    }}
+                  >
+                    Delete the Post
+                  </div>
+                </div>
+                ) : (
+                  <></>
+                )}
           </div>
           {!postEditClicked ? (
             <>
