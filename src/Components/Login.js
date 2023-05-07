@@ -14,7 +14,7 @@ function Login({ setUser }) {
   const onSubmitClick = (e) => {
     e.preventDefault();
 
-    // setUser({ email: "venura@gmail.com", password: "123", firstName: "Venura", lastName: "Warnasooriya", userid: "abv" });
+    setUser({ email: "venura@gmail.com", password: "123", firstName: "Venura", lastName: "Warnasooriya", userid: "abv" });
     // window.localStorage.setItem("useremail", "email@gmail.com");
     navigate("/");
 
