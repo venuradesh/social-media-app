@@ -270,7 +270,7 @@ function Post(props) {
     axios
       .delete(`http://localhost:8080/removeLike/${user_id}/${post_id}`)
       .then((response) => {
-        console.log(response.data);
+
         setIsLiked(false)
         setLikesCount(0);
       })
