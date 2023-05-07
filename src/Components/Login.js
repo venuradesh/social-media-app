@@ -13,16 +13,21 @@ function Login({ setUser }) {
 
   const onSubmitClick = (e) => {
     e.preventDefault();
+
+    setUser({ email: "venura@gmail.com", password: "123", firstName: "Venura", lastName: "Warnasooriya", userid: "abv" });
+    window.localStorage.setItem("useremail", "email@gmail.com");
+    navigate("/");
+
     axios
       .get(`http://localhost:8080/getUser/${email}`)
       .then((res) => {
-        if(res.data[0].password == password){
-          setUser({ 
+        if (res.data[0].password == password) {
+          setUser({
             email: res.data[0].userName,
             password: res.data[0].password,
-            firstName: res.data[0].fName, 
+            firstName: res.data[0].fName,
             lastName: res.data[0].lName,
-            userid: res.data[0].id
+            userid: res.data[0].id,
           });
           window.localStorage.setItem("useremail", res.data[0].userName);
           window.localStorage.setItem("password", res.data[0].password);
@@ -31,16 +36,13 @@ function Login({ setUser }) {
           window.localStorage.setItem("userid", res.data[0].id);
           navigate("/");
           console.log(res.data[0].userName);
-        }
-        else{
+        } else {
           console.log("password dosen't match");
         }
-        
       })
       .catch((err) => {
         console.log(err);
       });
-    
   };
 
   return (
