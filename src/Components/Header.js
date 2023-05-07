@@ -98,6 +98,7 @@ const Container = styled.div`
     transform-origin: top;
     transform: scaleY(0);
     transition: all 0.3s ease;
+    z-index: 100;
 
     &.active {
       transform: scaleY(1);
