@@ -237,11 +237,9 @@ function Post(props) {
   }, [likesCount]);
 
   useEffect(() => {
-    console.log(props.useId);
     axios
       .get(`http://localhost:8080/getUserLike/${postID}/${user_name}`)
       .then((res) => {
-        console.log(res.data);
         res.data.length == 1 ? setIsLiked(true) : setIsLiked(false);
       })
       .catch((err) => {

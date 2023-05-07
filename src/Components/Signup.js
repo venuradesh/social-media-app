@@ -19,12 +19,16 @@ function Signup() {
   const [confimePassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const [allreadyHave, setAllReadyHave] = useState(true);
+  const [error, setError] = useState("");
+  const [isError, setIsError] = useState(true);
 
   const onSubmitClick = (e) => {
     e.preventDefault();
+    
     axios
       .get(`http://localhost:8080/getUser/${email}`)
       .then((res) => {
+        console.log("cliked");
         res.data.length > 0 ? setAllReadyHave(true) : setAllReadyHave(false);
       })
       .catch((err) => {
@@ -36,7 +40,7 @@ function Signup() {
 
   useEffect(() => {
     if(!allreadyHave){
-      if(password === confimePassword){
+      if(password == confimePassword){
         const data = {
           userName: email,
           password: password,
@@ -52,6 +56,7 @@ function Signup() {
             },
           })
           .then((res) => {
+            setIsError(false);
             navigate("/login");
           })
           .catch((err) => {
@@ -59,12 +64,22 @@ function Signup() {
           });
       }
       else{
+        setIsError(true)
+        setError("password dosen't match")
         console.log("password dosen't match");
       }
       
     }
     else{
-      console.log("already have account");
+      if(isError){
+        setIsError(false)
+      }
+      else{
+        setIsError(true);
+        setError("already have account");
+      }
+      console.log(isError);
+      
     }
   }, [allreadyHave]);
 
@@ -72,6 +87,11 @@ function Signup() {
     <Container>
       <div className="container">
         <div className="heading">Sign Up</div>
+        {isError?(
+            <span className="error">{error}</span>
+          ):
+          <></>
+        }
         <Form>
           <InputField type="text" content="First Name" id="firstname" onChange={setFirstname} />
           <InputField type="text" content="Last Name" id="lastname" onChange={setLastname} />
@@ -121,6 +141,10 @@ const Container = styled.div`
       font-size: 1.7rem;
       font-weight: var(--font-w-600);
       color: var(--text-heading-color);
+    }
+
+    .error{
+      color: red;
     }
   }
 `;

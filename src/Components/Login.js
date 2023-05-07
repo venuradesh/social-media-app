@@ -10,6 +10,8 @@ function Login({ setUser }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isError, setIsError] = useState(false);
 
   const onSubmitClick = (e) => {
     e.preventDefault();
@@ -36,6 +38,8 @@ function Login({ setUser }) {
           
           navigate("/");
         } else {
+          setIsError(true);
+          setError("password dosen't match");
           console.log("password dosen't match");
         }
       })
@@ -48,6 +52,11 @@ function Login({ setUser }) {
     <Container>
       <div className="container">
         <div className="heading">Login</div>
+        {isError?(
+            <span className="error">{error}</span>
+          ):
+          <></>
+        }
         <Form>
           <InputField type="email" content="Email" id="email" onChange={setEmail} />
           <InputField type="password" content="Password" id="password" onChange={setPassword} />
@@ -55,7 +64,7 @@ function Login({ setUser }) {
             <button type="submit" className="btn submit" onClick={(e) => onSubmitClick(e)}>
               Login
             </button>
-            <button type="reset" className="btn clear">
+            <button type="reset" className="btn clear" onClick={}>
               Clear
             </button>
           </div>
@@ -92,6 +101,10 @@ const Container = styled.div`
       font-size: 1.7rem;
       font-weight: var(--font-w-600);
       color: var(--text-heading-color);
+    }
+
+    .error{
+      color: red;
     }
   }
 `;

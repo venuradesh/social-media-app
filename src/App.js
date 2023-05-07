@@ -24,7 +24,7 @@ function App() {
       <Router>
         <Routes>
           {user.userid ? <Route exact path="/" element={<Home user={user} setUser={setUser} />} /> : <Route exact path="/" element={<Navigate to="/login" />} />}
-          {user.userid ? <Route exact path="/profile" element={<Profile user={user} />} /> : <Route exact path="/" element={<Navigate to="/login" />} />}
+          {user.userid ? <Route exact path="/profile" element={<Profile user={user} setUser={setUser} />} /> : <Route exact path="/" element={<Navigate to="/login" />} />}
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/login" element={<Login setUser={setUser} />} />
         </Routes>

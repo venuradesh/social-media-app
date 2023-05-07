@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 //components
 import Post from "../Components/Post";
@@ -13,20 +14,14 @@ import post from "../Data/Posts";
 //images
 import ProfilePic from "../assets/profile.png";
 
-function Profile({ user }) {
+function Profile({ user,setUser }) {
+  const navigate = useNavigate();
   const [allPost, setAllPost] = useState([]);
   const [userDetailsfromAPI, setUserDetailsfromAPI] = useState({});
-  const [password, setPassword] = useState("");
-  const [address, setAddress] = useState("");
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [dob, setDOB] = useState("");
-
   const [editBtnClicked, setEditBtnClicked] = useState(false);
   const [deleteBtnClicked, setDeleteBtn] = useState(false);
   const [onFirstNameChange, setOnFIrstNameChange] = useState("");
   const [onLastNameChange, setOnLastNameChange] = useState("");
-  const [onEmailChange, setOnEmailChange] = useState("");
   const [onAddressChange, setOnAddressChange] = useState("");
   const [onDobChange, setOnDobChange] = useState("");
   const [onPasswordChange, setOnPasswordChange] = useState("");
@@ -45,33 +40,54 @@ function Profile({ user }) {
       .get(`http://localhost:8080/getUser/${user.email}`)
       .then((res) => {
         setUserDetailsfromAPI(res.data[0]);
+        setUser({
+          email: res.data[0].userName,
+          password: res.data[0].password,
+          firstName: res.data[0].fName,
+          lastName: res.data[0].lName,
+          userid: res.data[0].id,
+        });
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [userDetailsfromAPI]);
 
-  const onDeleteUserClick = (id) => {
-    console.log(id);
+  const onDeleteUserClick = () => {
     axios
-      .delete(`http://localhost:8080/deleteUser/${id}`)
-      .then((response) => {})
+      .delete(`http://localhost:8080/deleteUser/${user.email}`)
+      .then((response) => {
+        localStorage.clear();
+        setUser({
+          email: null,
+          password: null,
+          firstName: null,
+          lastName: null,
+          userid: null,
+        });
+        navigate("/");
+      })
       .catch((error) => {
         console.error(error);
       });
   };
 
-  const onUpdatePostClick = () => {
+  const onUpdateUserClick = () => {
     axios
       .put("http://localhost:8080/editUser", {
-        id: user.email,
-        password: password,
-        address: address,
-        fName: fname,
-        lName: lname,
-        dob: dob,
+        userName: user.email,
+        password: onPasswordChange,
+        address: onAddressChange,
+        fName: onFirstNameChange,
+        lName: onLastNameChange,
+        dob: onDobChange,
       })
-      .then((res) => {})
+      .then((res) => {
+        console.log(user.email);
+        setAllPost([]);
+        setUserDetailsfromAPI({});
+        setEditBtnClicked(false);
+      })
       .catch((err) => {
         console.log(err);
       });
@@ -92,7 +108,7 @@ function Profile({ user }) {
                     <div className="heading">
                       <img src={ProfilePic} alt="profile-image" />
                       <div className="name">
-                        {user.firstName} {user.lastName}
+                        {userDetailsfromAPI.firstName} {userDetailsfromAPI.lastName}
                       </div>
                     </div>
                     <div className="email item">
@@ -119,13 +135,12 @@ function Profile({ user }) {
                     <div className="form">
                       <InputField type={"text"} content={"Enter the FirstName"} value={user.firstName} id="firstname" onChange={setOnFIrstNameChange} />
                       <InputField type={"text"} content={"Enter the LastName"} value={user.lastName} id="LastName" onChange={setOnLastNameChange} />
-                      <InputField type={"text"} content={"Enter the Email"} value={user.email} id="email" onChange={setOnEmailChange} />
                       <InputField type={"text"} content={"Enter the Address"} value={user.address} id="address" onChange={setOnAddressChange} />
                       <InputField type={"date"} content={"Enter the Date of Birth"} hover={true} value={user.dob} id="dob" onChange={setOnDobChange} />
                       <InputField type={"password"} content={"Enter the Password"} value={user.password} id="password" onChange={setOnPasswordChange} />
                     </div>
                     <div className="btn-container2">
-                      <div className="submit btn" onClick={() => onUpdatePostClick()}>
+                      <div className="submit btn" onClick={() => onUpdateUserClick()}>
                         Save
                       </div>
                       <div className="cancel btn" onClick={() => setEditBtnClicked(false)}>
