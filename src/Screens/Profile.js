@@ -16,6 +16,11 @@ import ProfilePic from "../assets/profile.png";
 function Profile({ user }) {
   const [allPost, setAllPost] = useState([]);
   const [userDetailsfromAPI, setUserDetailsfromAPI] = useState({});
+  const [password, setPassword] = useState("");
+  const [address, setAddress] = useState("");
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
+  const [dob, setDOB] = useState("");
 
   useEffect(() => {
     axios
@@ -37,6 +42,35 @@ function Profile({ user }) {
         console.log(err);
       });
   }, []);
+
+  const onDeleteUserClick = (id) => {
+    console.log(id);
+    axios
+      .delete(`http://localhost:8080/deleteUser/${id}`)
+      .then((response) => {
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const onUpdatePostClick = () => {
+    axios
+      .put("http://localhost:8080/editUser", {
+        id: user.email,
+        password: password,
+        address: address,
+        fName: fname,
+        lName: lname,
+        dob:dob
+      })
+      .then((res) => {
+        
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <Container>
